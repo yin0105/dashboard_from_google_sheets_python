@@ -2,16 +2,17 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, g, session
 from flask_bootstrap import Bootstrap
 from models import UserForm, LoginForm
-from flask_datepicker import datepicker
+# from flask_datepicker import datepicker
 from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
 import json
-from proxy import MyThread, proxy_status, proxies_list
+# # from proxy import MyThread, proxy_status, proxies_list
 from sqlalchemy_serializer import SerializerMixin
-import requests
-from bs4 import BeautifulSoup
+# import requests
+# from bs4 import BeautifulSoup
 import os
-import pprint
+# import pprint
+from werkzeug.utils import secure_filename
 
 class Config(object):
     SECRET_KEY = '78w0o5tuuGex5Ktk8VvVDF9Pw3jv1MVE'
@@ -19,26 +20,25 @@ class Config(object):
 app = Flask(__name__)
 app.config.from_object(Config)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/aamc'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/dashboard_google_sheet'
 app.config['SECRET_KEY'] = "3489wfksf93r2k3lf9sdjkfe9t2j3krl"
 
 Bootstrap(app)
-datepicker(app)
+# datepicker(app)
 db = SQLAlchemy(app)
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
-state_dict = {}
+# class country_1(db.Model):
+#    short = db.Column(db.String(10), primary_key = True)
+#    country = db.Column(db.String(50))
 
-class country_1(db.Model):
-   short = db.Column(db.String(10), primary_key = True)
-   country = db.Column(db.String(50))
+# class country_2(db.Model):
+#    short = db.Column(db.String(10), primary_key = True)
+#    country = db.Column(db.String(50))
 
-class country_2(db.Model):
-   short = db.Column(db.String(10), primary_key = True)
-   country = db.Column(db.String(50))
-
-class country_3(db.Model):
-   short = db.Column(db.String(10), primary_key = True)
-   country = db.Column(db.String(50))
+# class country_3(db.Model):
+#    short = db.Column(db.String(10), primary_key = True)
+#    country = db.Column(db.String(50))
 
 class User(db.Model, SerializerMixin):  
     __tablename__ = 'user'
@@ -65,45 +65,64 @@ class User(db.Model, SerializerMixin):
         self.dates = dates
         self.locations = locations
 
+class Company(db.Model, SerializerMixin):  
+    __tablename__ = 'company'
 
-class PostalCode(db.Model, SerializerMixin):  
-    __tablename__ = 'state_postal_code'
-
-    serialize_only = ('state')
+    serialize_only = ('comp_name', 'cnpj', 'email', 'logo', 'standard_rate', 'improved_rate')
     
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    country = db.Column(db.String(50), nullable = False)
-    country_code = db.Column(db.String(6), nullable = False)
-    state = db.Column(db.String(50), nullable = False) 
-    state_code = db.Column(db.String(8), nullable = False)
- 
-    def __init__(self, country, country_code, state, state_code):
-        self.country = country
-        self.country_code = country_code
-        self.state = state
-        self.state_code = state_code
+    comp_name =  db.Column(db.String(50), nullable = False) 
+    cnpj =  db.Column(db.String(30), primary_key=True, nullable = False) 
+    email = db.Column(db.String(50), nullable = False) 
+    logo = db.Column(db.String(50), nullable = False) 
+    standard_rate = db.Column(db.Float, nullable = False) 
+    improved_rate = db.Column(db.Float, nullable = False)
 
-class Proxies(db.Model, SerializerMixin):  
-    __tablename__ = 'proxy'
 
-    serialize_only = ('state')
-    
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    proxy = db.Column(db.String(30), nullable = False)
-    bad = db.Column(db.Integer, nullable = False)
- 
-    def __init__(self, proxy, bad):
-        self.proxy = proxy
-        self.bad = bad
+    def __init__(self, comp_name, cnpj, email, logo, standard_rate, improved_rate):
+        self.comp_name = comp_name
+        self.cnpj = cnpj
+        self.email = email
+        self.logo = logo        
+        self.standard_rate = standard_rate
+        self.improved_rate = improved_rate
 
 
 @app.route('/', methods=['GET', 'POST'])
 def admin():
+    return render_template('main.html')
+
+@app.route('/users', methods=['GET', 'POST'])
+def users():
+    return render_template('user.html')
+
+@app.route('/company', methods=['GET', 'POST'])
+def company():
     # if not 'username' in session:
     #     return redirect(url_for("login"))
-    # users = User.query.order_by(User.name)
-    # print(request.method)
-    return render_template('main.html')
+    if request.method == 'POST':
+        print("Len = " + str(len(request.form)))
+        for ff in request.form:
+            print(ff)
+        f = request.files['logo']
+        if f.filename != '':
+            f.save(dir_path + "\\static\\app-assets\\images\\company_logo\\" + secure_filename(f.filename))
+        comp = Company(request.form['comp_name'], request.form['cnpj'], request.form['email'], f.filename, request.form['standard_rate'], request.form['improved_rate'])
+            
+        db.session.add(comp)
+        db.session.commit()
+    companies = Company.query.order_by(Company.comp_name)
+    return render_template('company.html', comps=companies)
+
+
+# @app.route('/uploader', methods = ['GET', 'POST'])
+# def upload_file():
+#    if request.method == 'POST':
+#         f = request.files['file']
+#         if f.filename != '':
+#             f.save(dir_path + "\\static\\app-assets\\images\\company_logo\\" + secure_filename(f.filename))
+    
+#       return 'file uploaded successfully'
+
 
 # @app.route('/login', methods = ['POST', 'GET'])
 # def login():
@@ -254,6 +273,5 @@ def admin():
 
 
 
-proxies_file = open('proxies.txt', 'r') 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
