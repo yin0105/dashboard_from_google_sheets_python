@@ -92,7 +92,7 @@ $(document).ready(function() {
           $("#email").val("")
           $("#standard_rate").val("")
           $("#improved_rate").val("")
-          $("#btn_add_data").html("Add Data")
+          $("#btn_add_data").html("Adicionar Dados")
           
           $(this).removeClass("btn-secondary")
           $(".add-new-data").addClass("show")
@@ -171,7 +171,7 @@ $('.action-edit').on("click",function(e){
   $("#improved_rate").val($(this).parent().siblings("[name='improved_rate']").text())
   $("#logo").val($(this).parent().siblings("[name='logo']").text())
   $("#cur_cnpj").val($(this).parent().siblings("[name='cnpj']").text())
-  $("#btn_add_data").html("Update Data")
+  $("#btn_add_data").html("Dados de atualização")
 });
 
 // On Delete
