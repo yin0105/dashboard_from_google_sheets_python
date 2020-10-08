@@ -43,24 +43,26 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 class User(db.Model, SerializerMixin):  
     __tablename__ = 'user'
 
-    serialize_only = ('name', 'lastname', 'email', 'password', 'photo', 'company')
+    serialize_only = ('name', 'lastname', 'email', 'password', 'photo', 'company', 'approve')
     
     name =  db.Column(db.String(30), nullable = False) 
     lastname =  db.Column(db.String(30), nullable = False)     
     email = db.Column(db.String(50), nullable = False) 
     password =  db.Column(db.String(30), nullable = False) 
     photo = db.Column(db.String(50), nullable = False) 
-    companies = db.Column(db.String(), nullable = False) 
+    companies = db.Column(db.Text, nullable = False) 
+    approve = db.Column(db.Boolean, nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
 
-    def __init__(self, name, lastname, email, password, photo, companies):
+    def __init__(self, name, lastname, email, password, photo, companies, approve):
         self.name = name
         self.lastname = lastname
         self.email = email
         self.password = password                
         self.photo = photo
         self.companies = companies
+        self.approve = approve
 
 class Company(db.Model, SerializerMixin):  
     __tablename__ = 'company'
