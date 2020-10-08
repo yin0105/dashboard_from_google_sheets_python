@@ -10,7 +10,7 @@
 $(document).ready(function() {
   "use strict"
   // init list view datatable
-  $("#main-menu-navigation > li:contains('Company')").addClass("active");
+  $("#main-menu-navigation > li:contains('Tables')").addClass("active");
   var dataListView = $(".data-list-view").DataTable({
     responsive: false,
     columnDefs: [
@@ -86,12 +86,9 @@ $(document).ready(function() {
       {
         text: "<i class='feather icon-plus'></i> Adicionar novo",
         action: function() {
-          $("#cur_cnpj").val("---")
-          $("#comp_name").val("")
-          $("#cnpj").val("")
-          $("#email").val("")
-          $("#standard_rate").val("")
-          $("#improved_rate").val("")
+          $("#cur_id").val("---")
+          $("#tbl_name").val("")
+          $("#description").val("")
           $("#btn_add_data").html("Adicionar Dados")
           
           $(this).removeClass("btn-secondary")
@@ -164,20 +161,15 @@ $('.action-edit').on("click",function(e){
   $(".add-new-data").addClass("show");
   $(".overlay-bg").addClass("show");
   
-  $("#comp_name").val($(this).parent().siblings("[name='comp_name']").text())
-  $("#cnpj").val($(this).parent().siblings("[name='cnpj']").text())
-  $("#email").val($(this).parent().siblings("[name='email']").text())
-  $("#standard_rate").val($(this).parent().siblings("[name='standard_rate']").text())
-  $("#improved_rate").val($(this).parent().siblings("[name='improved_rate']").text())
-  $("#logo").val($(this).parent().siblings("[name='logo']").text())
-  $("#cur_cnpj").val($(this).parent().siblings("[name='cnpj']").text())
+  $("#cur_id").val($(this).parent().siblings("[name='tbl_id']").val())
+  $("#tbl_name").val($(this).parent().siblings("[name='tbl_name']").text())
+  $("#description").val($(this).parent().siblings("[name='description']").text())
   $("#btn_add_data").html("Dados de atualização")
 });
 
 // On Delete
 $('.action-delete').on("click", function(e){
-  alert("del: " + $(this).parent().siblings("[name='cnpj']").text())
   e.stopPropagation();
-  location.href = "/remove_company/" + $(this).parent().siblings("[name='cnpj']").text()
+  location.href = "/remove_table/" + $(this).parent().siblings("[name='tbl_id']").val()
   
 });

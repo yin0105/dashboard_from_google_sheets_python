@@ -85,22 +85,70 @@ class Company(db.Model, SerializerMixin):
         self.standard_rate = standard_rate
         self.improved_rate = improved_rate
 
+class Tbl(db.Model, SerializerMixin):  
+    __tablename__ = 'tbl'
+
+    serialize_only = ('tbl_name', 'description')
+    
+    tbl_name =  db.Column(db.String(50), nullable = False) 
+    description = db.Column(db.Text, nullable = False) 
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
+    def __init__(self, tbl_name, description):
+        self.tbl_name = tbl_name
+        self.description = description
+
+class Field(db.Model, SerializerMixin):  
+    __tablename__ = 'field'
+
+    serialize_only = ('tbl_id', 'from_', 'to', 'rule', 'filed_type')
+    
+    tbl_id =  db.Column(db.Integer, nullable = False) 
+    from_ =  db.Column(db.String(50), nullable = False)     
+    to = db.Column(db.String(50), nullable = False) 
+    rule =  db.Column(db.Text, nullable = False) 
+    filed_type = db.Column(db.Integer, nullable = False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
+    def __init__(self, tbl_id, from_, to, rule, filed_type):
+        self.tbl_id = tbl_id
+        self.from_ = from_
+        self.to = to
+        self.rule = rule                
+        self.filed_type = filed_type
+
+class Field_Type(db.Model, SerializerMixin):  
+    __tablename__ = 'field_type'
+
+    serialize_only = ('field_type')
+    
+    field_type =  db.Column(db.String(10), nullable = False)     
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
+    def __init__(self, field_type):
+        self.field_type = field_type
+
 
 @app.route('/', methods=['GET', 'POST'])
 def admin():
     return render_template('main.html')
+
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
     users = User.query.order_by(User.id)
     return render_template('user.html', users=users)
 
+
 @app.route('/remove_user/<string:user_id>', methods=['GET', 'POST'])
 def remove_user(user_id):
     db.session.query(User).filter_by(id=user_id).delete()
     db.session.commit()
-
     return redirect(url_for('users'))
+
 
 @app.route('/company', methods=['GET', 'POST'])
 def company():
@@ -121,12 +169,36 @@ def company():
     companies = Company.query.order_by(Company.comp_name)
     return render_template('company.html', comps=companies)
 
+
 @app.route('/remove_company/<string:cnpj>', methods=['GET', 'POST'])
 def remove_company(cnpj):
     db.session.query(Company).filter_by(cnpj=cnpj).delete()
     db.session.commit()
-
     return redirect(url_for('company'))
+
+
+@app.route('/table', methods=['GET', 'POST'])
+def table_():
+    # if not 'username' in session:
+    #     return redirect(url_for("login"))
+    if request.method == 'POST':
+        print("cur_id = " + str(request.form['cur_id']))
+        if request.form['cur_id'] == "---":
+            comp = Tbl(request.form['tbl_name'], request.form['description'])
+            db.session.add(comp)
+        else:
+            db.session.query(Tbl).filter_by(id = request.form['cur_id']).update({Tbl.tbl_name:request.form['tbl_name'], Tbl.description:request.form['description']}, synchronize_session = False)            
+        db.session.commit()
+    tbls = Tbl.query.order_by(Tbl.id)
+    return render_template('table.html', tbls=tbls)
+
+
+@app.route('/remove_table/<string:table_id>', methods=['GET', 'POST'])
+def remove_table(table_id):
+    db.session.query(Tbl).filter_by(id=table_id).delete()
+    db.session.commit()
+    return redirect(url_for('table_'))
+
 
 
 # @app.route('/uploader', methods = ['GET', 'POST'])

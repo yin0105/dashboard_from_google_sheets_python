@@ -28,25 +28,18 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Nome da Empresa</th>
-                        <th>CNPJ</th>
-                        <th>email responsável</th>
-                        <th>Logo da Empresa</th>
-                        <th>Alíquota Padrão de Imposto Sobre Vendas</th>
-                        <th>Alíquota Melhorada Imposto Sobre Vendas</th>
+                        <th>Nome da tabela</th>
+                        <th>descrição</th>
                         <th>Açao</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for comp in comps %} 
+                    {% for tbl in tbls %} 
                         <tr>
                             <td></td>
-                            <td class="product-name" name="comp_name">{{comp.comp_name}}</td>
-                            <td class="product-name" name="cnpj">{{comp.cnpj}}</td>
-                            <td class="product-category" name="email">{{comp.email}}</td>
-                            <td class="product-img" name="logo"><img src="static/app-assets/images/company_logo/{{comp.logo}}" alt="Img placeholder"></td>
-                            <td class="product-category" name="standard_rate">{{comp.standard_rate}}</td>
-                            <td class="product-category" name="improved_rate">{{comp.improved_rate}}</td>
+                            <input type="hidden" name="tbl_id" value="{{tbl.id}}">
+                            <td class="product-name" name="tbl_name">{{tbl.tbl_name}}</td>
+                            <td class="product-name" name="description">{{tbl.description}}</td>
                             <td class="product-action">
                                 <span class="action-edit"><i class="feather icon-edit"></i></span>
                                 <span class="action-delete"><i class="feather icon-trash"></i></span>
@@ -64,49 +57,25 @@
             <div class="add-new-data">
                 <div class="div mt-2 px-2 d-flex new-data-title justify-content-between">
                     <div>
-                        <h4 class="text-uppercase">Adicionar / Atualizar Dados da Empresa</h4>
+                        <h4 class="text-uppercase">Adicionar / Atualizar Dados da Tabela</h4>
                     </div>
                     <div class="hide-data-sidebar">
                         <i class="feather icon-x"></i>
                     </div>
                 </div>
                 <form action="" method="post" class="form" role="form" enctype="multipart/form-data">
-                    <input type="hidden" name="cur_cnpj" id="cur_cnpj">
+                    <input type="hidden" name="cur_id" id="cur_id">
                     <div class="data-items pb-3">
                         <div class="data-fields px-2 mt-3">
                             <div class="row">                            
                                 <div class="col-sm-12 data-field-col">
-                                    <label for="comp_name">Nome da Empresa</label>
-                                    <input type="text" class="form-control" name="comp_name" id="comp_name">
+                                    <label for="tbl_name">Nome da tabela</label>
+                                    <input type="text" class="form-control" name="tbl_name" id="tbl_name">
                                 </div>
                                 <div class="col-sm-12 data-field-col">
-                                    <label for="cnpj">CNPJ</label>
-                                    <input type="text" class="form-control" name="cnpj" id="cnpj">
+                                    <label for="description">Descrição</label>
+                                    <input type="text" class="form-control" name="description" id="description">
                                 </div>
-                                <div class="col-sm-12 data-field-col">
-                                    <label for="email">email responsável</label>
-                                    <input type="text" class="form-control" name="email" id="email">
-                                </div>
-                                <div class="col-sm-12 data-field-col">
-                                    <label for="standard_rate">Alíquota Padrão de Imposto Sobre Vendas</label>
-                                    <input type="text" class="form-control" name="standard_rate" id="standard_rate">
-                                </div>
-                                <div class="col-sm-12 data-field-col">
-                                    <label for="improved_rate">Alíquota Melhorada Imposto Sobre Vendas</label>
-                                    <input type="text" class="form-control" name="improved_rate" id="improved_rate">
-                                </div>
-                                <div class="col-sm-12 data-field-col data-list-upload">
-                                    <label for="logo">Logo da Empresa</label>
-                                    <input type="file" class="form-control" name="logo" id="logo"> 
-                                    <!-- <form action="#" class="dropzone dropzone-area" id="dataListUpload">
-                                        <div class="dz-message">Upload Image</div>
-                                    </form> -->
-                                    <!-- <div action="#" class="dropzone dropzone-area" name="logo">
-                                        <div class="dz-message">Upload Image</div>
-                                    </div> -->
-                                </div>
-                            
-
                             </div>
                         </div>
                     </div>
@@ -140,7 +109,7 @@
 <!-- END: Page Vendor JS-->
 
 <!-- BEGIN: Page JS-->
-<script src="static/app-assets/js/company-list-view.js"></script>
+<script src="static/app-assets/js/table-list-view.js"></script>
 <!-- END: Page JS-->
 {% endblock %}
 
