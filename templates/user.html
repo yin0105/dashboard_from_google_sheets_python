@@ -28,27 +28,28 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Company Name</th>
-                        <th>CNPJ</th>
-                        <th>email</th>
-                        <th>Company Logo</th>
-                        <th>Standard Sales Tax Rate</th>
-                        <th>Improved Sales Tax Rate</th>
-                        <th>Action</th>
+                        <th>Nome</th>
+                        <th>Sobrenome</th>
+                        <th>Email</th>
+                        <th>Senha</th>
+                        <th>Foto</th>
+                        <th>Empresas </th>
+                        <th>Açao</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for comp in comps %} 
+                    {% for user in users %} 
                         <tr>
                             <td></td>
-                            <td class="product-name" name="comp_name">{{comp.comp_name}}</td>
-                            <td class="product-name" name="cnpj">{{comp.cnpj}}</td>
-                            <td class="product-category" name="email">{{comp.email}}</td>
-                            <td class="product-img" name="logo"><img src="static/app-assets/images/company_logo/{{comp.logo}}" alt="Img placeholder"></td>
-                            <td class="product-category" name="standard_rate">{{comp.standard_rate}}</td>
-                            <td class="product-category" name="improved_rate">{{comp.improved_rate}}</td>
+                            <input type="hidden" name="user_id" value="{{user.id}}">
+                            <td class="product-name" name="user_name">{{user.name}}</td>
+                            <td class="product-name" name="lastname">{{user.lastname}}</td>
+                            <td class="product-category" name="email">{{user.email}}</td>                            
+                            <td class="product-category" name="password">{{user.password}}</td>
+                            <td class="product-img" name="photo"><img src="static/app-assets/images/user_photo/{{user.photo}}" alt="Img placeholder"></td>
+                            <td class="product-category" name="companies">{{user.companies}}</td>
                             <td class="product-action">
-                                <span class="action-edit"><i class="feather icon-edit"></i></span>
+                                <!-- <span class="action-edit"><i class="feather icon-edit"></i></span> -->
                                 <span class="action-delete"><i class="feather icon-trash"></i></span>
                             </td>
                         </tr>
@@ -64,7 +65,7 @@
             <div class="add-new-data">
                 <div class="div mt-2 px-2 d-flex new-data-title justify-content-between">
                     <div>
-                        <h4 class="text-uppercase">Add Company Data</h4>
+                        <h4 class="text-uppercase">Add User Data</h4>
                     </div>
                     <div class="hide-data-sidebar">
                         <i class="feather icon-x"></i>

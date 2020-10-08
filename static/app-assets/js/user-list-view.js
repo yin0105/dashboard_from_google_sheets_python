@@ -10,7 +10,7 @@
 $(document).ready(function() {
   "use strict"
   // init list view datatable
-  $("#main-menu-navigation > li:contains('Company')").addClass("active");
+  $("#main-menu-navigation > li:contains('User')").addClass("active");
   var dataListView = $(".data-list-view").DataTable({
     responsive: false,
     columnDefs: [
@@ -83,23 +83,6 @@ $(document).ready(function() {
     bInfo: false,
     pageLength: 4,
     buttons: [
-      {
-        text: "<i class='feather icon-plus'></i> Add New",
-        action: function() {
-          $("#cur_cnpj").val("---")
-          $("#comp_name").val("")
-          $("#cnpj").val("")
-          $("#email").val("")
-          $("#standard_rate").val("")
-          $("#improved_rate").val("")
-          $("#btn_add_data").html("Adicionar Dados")
-          
-          $(this).removeClass("btn-secondary")
-          $(".add-new-data").addClass("show")
-          $(".overlay-bg").addClass("show")
-        },
-        className: "btn-outline-primary"
-      }
     ],
     initComplete: function(settings, json) {
       $(".dt-buttons .btn").removeClass("btn-secondary")
@@ -176,8 +159,7 @@ $('.action-edit').on("click",function(e){
 
 // On Delete
 $('.action-delete').on("click", function(e){
-  alert("del: " + $(this).parent().siblings("[name='cnpj']").text())
   e.stopPropagation();
-  location.href = "/remove_company/" + $(this).parent().siblings("[name='cnpj']").text()
-  
+  location.href = "/remove_user/" + $(this).parent().siblings("[name='user_id']").val()
+ 
 });

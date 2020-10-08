@@ -43,27 +43,24 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 class User(db.Model, SerializerMixin):  
     __tablename__ = 'user'
 
-    serialize_only = ('name', 'user_id', 'password', 'email', 'phone', 'dates', 'locations')
+    serialize_only = ('name', 'lastname', 'email', 'password', 'photo', 'company')
     
     name =  db.Column(db.String(30), nullable = False) 
-    user_id =  db.Column(db.String(30), nullable = False) 
+    lastname =  db.Column(db.String(30), nullable = False)     
+    email = db.Column(db.String(50), nullable = False) 
     password =  db.Column(db.String(30), nullable = False) 
-    email = db.Column(db.String(30), nullable = False) 
-    phone = db.Column(db.String(20), nullable = False) 
-    dates = db.Column(db.String(500), nullable = False)
-    locations = db.Column(db.String(), nullable = False) 
-    status = db.Column(db.Integer, default = 0) 
+    photo = db.Column(db.String(50), nullable = False) 
+    companies = db.Column(db.String(), nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
 
-    def __init__(self, name, user_id, password, email, phone, dates, locations):
+    def __init__(self, name, lastname, email, password, photo, companies):
         self.name = name
-        self.user_id = user_id
-        self.password = password        
+        self.lastname = lastname
         self.email = email
-        self.phone = phone
-        self.dates = dates
-        self.locations = locations
+        self.password = password                
+        self.photo = photo
+        self.companies = companies
 
 class Company(db.Model, SerializerMixin):  
     __tablename__ = 'company'
@@ -93,7 +90,15 @@ def admin():
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
-    return render_template('user.html')
+    users = User.query.order_by(User.id)
+    return render_template('user.html', users=users)
+
+@app.route('/remove_user/<string:user_id>', methods=['GET', 'POST'])
+def remove_user(user_id):
+    db.session.query(User).filter_by(id=user_id).delete()
+    db.session.commit()
+
+    return redirect(url_for('users'))
 
 @app.route('/company', methods=['GET', 'POST'])
 def company():
