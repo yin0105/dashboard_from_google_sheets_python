@@ -100,18 +100,26 @@ def company():
     # if not 'username' in session:
     #     return redirect(url_for("login"))
     if request.method == 'POST':
-        print("Len = " + str(len(request.form)))
-        for ff in request.form:
-            print(ff)
         f = request.files['logo']
+        print("cur_cnpj = " + request.form['cur_cnpj'])
         if f.filename != '':
             f.save(dir_path + "\\static\\app-assets\\images\\company_logo\\" + secure_filename(f.filename))
-        comp = Company(request.form['comp_name'], request.form['cnpj'], request.form['email'], f.filename, request.form['standard_rate'], request.form['improved_rate'])
+        if request.form['cur_cnpj'] == "---":
+            comp = Company(request.form['comp_name'], request.form['cnpj'], request.form['email'], f.filename, request.form['standard_rate'], request.form['improved_rate'])
+            db.session.add(comp)
+        else:
+            db.session.query(Company).filter_by(cnpj = request.form['cur_cnpj']).update({Company.comp_name:request.form['comp_name'], Company.cnpj:request.form['cnpj'], Company.email:request.form['email'], Company.logo:f.filename, Company.standard_rate:request.form['standard_rate'], Company.improved_rate:request.form['improved_rate']}, synchronize_session = False)
             
-        db.session.add(comp)
         db.session.commit()
     companies = Company.query.order_by(Company.comp_name)
     return render_template('company.html', comps=companies)
+
+@app.route('/remove_company/<string:cnpj>', methods=['GET', 'POST'])
+def remove_company(cnpj):
+    db.session.query(Company).filter_by(cnpj=cnpj).delete()
+    db.session.commit()
+
+    return redirect(url_for('company'))
 
 
 # @app.route('/uploader', methods = ['GET', 'POST'])
