@@ -26,11 +26,7 @@
             <div class="col-md-3">
                 <select class="form-control" id="tbl_list">
                     {% for tbl in tbls %} 
-                        {% if tbl_id == tbl.id %}
-                            <option value="{{tbl.id}}" selected="selected">{{tbl.tbl_name}}</option>
-                        {% else %}
-                            <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                        {% endif %}
+                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
                     {% endfor %}
                 </select>
             </div>

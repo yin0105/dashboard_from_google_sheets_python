@@ -10,7 +10,7 @@
     $(document).ready(function() {
     "use strict"
     // init list view datatable
-    $("#main-menu-navigation > li:contains('Fields')").addClass("active");
+    $("#main-menu-navigation > li:contains('Rules')").addClass("active");
 
     $.each($("#tbl_list > option"), function( key, value ) {
         if($(this).prop("value") == $("#tbl_id").val()) {
@@ -91,19 +91,19 @@
         pageLength: 4,
         buttons: [
         {
-            text: "<i class='feather icon-plus'></i> Adicionar novo",
-            action: function() {
-                $("#cur_id").val("---")
-                $("#tbl_id").val($("#tbl_list").val())
-                $("#from").val("")
-                $("#to").val("")
-                $("#btn_add_data").html("Adicionar Dados")
+            // text: "<i class='feather icon-plus'></i> Adicionar novo",
+            // action: function() {
+            //     $("#cur_id").val("---")
+            //     $("#tbl_id").val($("#tbl_list").val())
+            //     $("#from").val("")
+            //     $("#to").val("")
+            //     $("#btn_add_data").html("Adicionar Dados")
                 
-                $(this).removeClass("btn-secondary")
-                $(".add-new-data").addClass("show")
-                $(".overlay-bg").addClass("show")
-            },
-            className: "btn-outline-primary"
+            //     $(this).removeClass("btn-secondary")
+            //     $(".add-new-data").addClass("show")
+            //     $(".overlay-bg").addClass("show")
+            // },
+            // className: "btn-outline-primary"
         }
         ],
         initComplete: function(settings, json) {
@@ -170,9 +170,9 @@
         $(".overlay-bg").addClass("show");
         
         $("#cur_id").val($(this).parent().siblings("[name='field_id']").val())
-        $("#tbl_id").val($("#tbl_list").val())
-        $("#from").val($(this).parent().siblings("[name='from']").text())
+        $("#tbl_id").val($("#tbl_list").val())        
         $("#to").val($(this).parent().siblings("[name='to']").text())
+        $("#rule").val($(this).parent().siblings("[name='rule']").text())
         $field_type_txt = $(this).parent().siblings("[name='field_type']").text()
         $.each($("#field_type > option"), function( key, value ) {
             if($(this).html() == $field_type_txt) {
@@ -185,10 +185,23 @@
     // On Delete
     $('.action-delete').on("click", function(e){
         e.stopPropagation();
-        location.href = "/remove_field/" + $(this).parent().siblings("[name='field_id']").val()
-    
+        location.href = "/remove_field/" + $(this).parent().siblings("[name='field_id']").val()    
     });
 
     $("#tbl_list").on("change", function(e) {
-        location.href = "/field/" + $(this).val()
+        location.href = "/rule/" + $(this).val()
     });
+
+    $("#op_panel > div > button").on("click", function(e) {
+        if($(this).text() == "<-") {
+            $rr = $("#rule").val()
+            $("#rule").val($rr.substring(0, $rr.length-1))    
+        } else {
+            $("#rule").val($("#rule").val() + $(this).text())
+        }
+    })
+
+    // Add Field Button
+    $("#op_panel > div > div > button").on("click", function(e) {
+        $("#rule").val($("#rule").val() + $("#field option:selected").text())
+    })
