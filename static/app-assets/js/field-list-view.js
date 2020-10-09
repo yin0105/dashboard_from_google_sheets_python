@@ -11,6 +11,14 @@
     "use strict"
     // init list view datatable
     $("#main-menu-navigation > li:contains('Fields')").addClass("active");
+
+    $.each($("#tbl_list > option"), function( key, value ) {
+        // alert($(this).prop("value") + "  " + $("#tbl_id").val())
+        if($(this).prop("value") == $("#tbl_id").val()) {
+            $("#tbl_list").prop("selectedIndex", key);
+        }
+    });
+
     var dataListView = $(".data-list-view").DataTable({
         responsive: false,
         columnDefs: [
@@ -172,10 +180,8 @@
         $.each($("#field_type > option"), function( key, value ) {
             if($(this).html() == $field_type_txt) {
                 $("#field_type").prop("selectedIndex", key);
-                // alert($("#field_type").prop())
             }
         });
-        // $("#field_type").val($(this).parent().siblings("[name='field_type']").text())
         $("#btn_add_data").html("Dados de atualização")
     });
 
@@ -184,4 +190,8 @@
         e.stopPropagation();
         location.href = "/remove_field/" + $(this).parent().siblings("[name='field_id']").val()
     
+    });
+
+    $("#tbl_list").on("change", function(e) {
+        location.href = "/field/" + $(this).val()
     });

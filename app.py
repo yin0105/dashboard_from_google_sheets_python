@@ -194,6 +194,31 @@ def remove_table(table_id):
 def field():
     # if not 'username' in session:
     #     return redirect(url_for("login"))
+    tbls = Tbl.query.order_by(Tbl.id)
+    tbl_id = -1
+    if len(tbls.all()) > 0:
+        tbl_id = tbls.first().id
+    print("tbl_id = " + str(tbl_id))
+    return redirect(url_for('field_of_table', tbl_id=tbl_id))
+    # if request.method == 'POST':
+    #     if request.form['cur_id'] == "---":
+    #         comp = Field(request.form['tbl_id'], request.form['from'], request.form['to'], "", request.form['field_type'])
+    #         db.session.add(comp)
+    #     else:
+    #         print(str(request.form['cur_id']))
+    #         db.session.query(Field).filter_by(id = request.form['cur_id']).update({Field.from_:request.form['from'], Field.to:request.form['to'], Field.field_type:request.form['field_type']}, synchronize_session = False)            
+    #     db.session.commit()
+    # field_types = Field_Type.query.order_by(Field_Type.id)
+    # tbls = Tbl.query.order_by(Tbl.id)
+    # # fields = Field.query.order_by(Field.id)
+    # fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.id, Field.tbl_id, Field.from_, Field.to, Field_Type.field_type)
+   
+    return render_template('field.html', fields=fields, tbls=tbls, field_types=field_types)
+
+@app.route('/field/<int:tbl_id>', methods=['GET', 'POST'])
+def field_of_table(tbl_id):
+    # if not 'username' in session:
+    #     return redirect(url_for("login"))
     if request.method == 'POST':
         if request.form['cur_id'] == "---":
             comp = Field(request.form['tbl_id'], request.form['from'], request.form['to'], "", request.form['field_type'])
@@ -205,12 +230,12 @@ def field():
     field_types = Field_Type.query.order_by(Field_Type.id)
     tbls = Tbl.query.order_by(Tbl.id)
     # fields = Field.query.order_by(Field.id)
-    fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.id, Field.tbl_id, Field.from_, Field.to, Field_Type.field_type)
+    fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.id, Field.tbl_id, Field.from_, Field.to, Field_Type.field_type).filter(Field.tbl_id==tbl_id)
    
-    return render_template('field.html', fields=fields, tbls=tbls, field_types=field_types)
+    return render_template('field.html', fields=fields, tbls=tbls, field_types=field_types, tbl_id=tbl_id)
 
 
-@app.route('/remove_field/<string:field_id>', methods=['GET', 'POST'])
+@app.route('/remove_field/<int:field_id>', methods=['GET', 'POST'])
 def remove_field(field_id):
     db.session.query(Field).filter_by(id=field_id).delete()
     db.session.commit()

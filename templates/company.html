@@ -2,14 +2,14 @@
 
 {% block styles %}
  <!-- BEGIN: Vendor CSS-->
- <link rel="stylesheet" type="text/css" href="static/app-assets/vendors/css/file-uploaders/dropzone.min.css">
- <link rel="stylesheet" type="text/css" href="static/app-assets/vendors/css/tables/datatable/datatables.min.css">
- <link rel="stylesheet" type="text/css" href="static/app-assets/vendors/css/tables/datatable/extensions/dataTables.checkboxes.css">
+ <link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/file-uploaders/dropzone.min.css">
+ <link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/datatables.min.css">
+ <link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/tables/datatable/extensions/dataTables.checkboxes.css">
  <!-- END: Vendor CSS-->
 
 <!-- BEGIN: Page CSS-->
-<link rel="stylesheet" type="text/css" href="static/app-assets/css/plugins/file-uploaders/dropzone.css">
-<link rel="stylesheet" type="text/css" href="static/app-assets/css/pages/data-list-view.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/plugins/file-uploaders/dropzone.css">
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/pages/data-list-view.css">
 <!-- END: Page CSS-->
 
 {% endblock %}
@@ -44,7 +44,7 @@
                             <td class="product-name" name="comp_name">{{comp.comp_name}}</td>
                             <td class="product-name" name="cnpj">{{comp.cnpj}}</td>
                             <td class="product-category" name="email">{{comp.email}}</td>
-                            <td class="product-img" name="logo"><img src="static/app-assets/images/company_logo/{{comp.logo}}" alt="Img placeholder"></td>
+                            <td class="product-img" name="logo"><img src="/static/app-assets/images/company_logo/{{comp.logo}}" alt="Img placeholder"></td>
                             <td class="product-category" name="standard_rate">{{comp.standard_rate}}</td>
                             <td class="product-category" name="improved_rate">{{comp.improved_rate}}</td>
                             <td class="product-action">
@@ -130,17 +130,17 @@
 
 {% block js %}
 <!-- BEGIN: Page Vendor JS-->
-<script src="static/app-assets/vendors/js/extensions/dropzone.min.js"></script>
-<script src="static/app-assets/vendors/js/tables/datatable/datatables.min.js"></script>
-<script src="static/app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
-<script src="static/app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
-<script src="static/app-assets/vendors/js/tables/datatable/buttons.bootstrap.min.js"></script>
-<script src="static/app-assets/vendors/js/tables/datatable/dataTables.select.min.js"></script>
-<script src="static/app-assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
+<script src="/static/app-assets/vendors/js/extensions/dropzone.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.buttons.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.bootstrap4.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/buttons.bootstrap.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/dataTables.select.min.js"></script>
+<script src="/static/app-assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
 <!-- END: Page Vendor JS-->
 
 <!-- BEGIN: Page JS-->
-<script src="static/app-assets/js/company-list-view.js"></script>
+<script src="/static/app-assets/js/company-list-view.js"></script>
 <!-- END: Page JS-->
 {% endblock %}
 
