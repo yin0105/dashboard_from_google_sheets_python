@@ -13,6 +13,9 @@ from sqlalchemy_serializer import SerializerMixin
 import os
 # import pprint
 from werkzeug.utils import secure_filename
+from sqlalchemy.orm import relationship
+from sqlalchemy import Table, Column, Integer, ForeignKey
+
 
 class Config(object):
     SECRET_KEY = '78w0o5tuuGex5Ktk8VvVDF9Pw3jv1MVE'
@@ -28,17 +31,6 @@ Bootstrap(app)
 db = SQLAlchemy(app)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-# class country_1(db.Model):
-#    short = db.Column(db.String(10), primary_key = True)
-#    country = db.Column(db.String(50))
-
-# class country_2(db.Model):
-#    short = db.Column(db.String(10), primary_key = True)
-#    country = db.Column(db.String(50))
-
-# class country_3(db.Model):
-#    short = db.Column(db.String(10), primary_key = True)
-#    country = db.Column(db.String(50))
 
 class User(db.Model, SerializerMixin):  
     __tablename__ = 'user'
@@ -54,7 +46,6 @@ class User(db.Model, SerializerMixin):
     approve = db.Column(db.Boolean, nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-
     def __init__(self, name, lastname, email, password, photo, companies, approve):
         self.name = name
         self.lastname = lastname
@@ -63,6 +54,7 @@ class User(db.Model, SerializerMixin):
         self.photo = photo
         self.companies = companies
         self.approve = approve
+
 
 class Company(db.Model, SerializerMixin):  
     __tablename__ = 'company'
@@ -76,7 +68,6 @@ class Company(db.Model, SerializerMixin):
     standard_rate = db.Column(db.Float, nullable = False) 
     improved_rate = db.Column(db.Float, nullable = False)
 
-
     def __init__(self, comp_name, cnpj, email, logo, standard_rate, improved_rate):
         self.comp_name = comp_name
         self.cnpj = cnpj
@@ -84,6 +75,7 @@ class Company(db.Model, SerializerMixin):
         self.logo = logo        
         self.standard_rate = standard_rate
         self.improved_rate = improved_rate
+
 
 class Tbl(db.Model, SerializerMixin):  
     __tablename__ = 'tbl'
@@ -94,30 +86,31 @@ class Tbl(db.Model, SerializerMixin):
     description = db.Column(db.Text, nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-
     def __init__(self, tbl_name, description):
         self.tbl_name = tbl_name
         self.description = description
 
+
 class Field(db.Model, SerializerMixin):  
     __tablename__ = 'field'
 
-    serialize_only = ('tbl_id', 'from_', 'to', 'rule', 'filed_type')
+    serialize_only = ('tbl_id', 'from_', 'to', 'rule', 'field_type')
     
     tbl_id =  db.Column(db.Integer, nullable = False) 
     from_ =  db.Column(db.String(50), nullable = False)     
     to = db.Column(db.String(50), nullable = False) 
     rule =  db.Column(db.Text, nullable = False) 
-    filed_type = db.Column(db.Integer, nullable = False)
+    field_type = db.Column(db.Integer, db.ForeignKey('field_type.id'))
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    f_type = db.relationship('Field_Type')
 
-
-    def __init__(self, tbl_id, from_, to, rule, filed_type):
+    def __init__(self, tbl_id, from_, to, rule, field_type):
         self.tbl_id = tbl_id
         self.from_ = from_
         self.to = to
         self.rule = rule                
-        self.filed_type = filed_type
+        self.field_type = field_type
+
 
 class Field_Type(db.Model, SerializerMixin):  
     __tablename__ = 'field_type'
@@ -126,11 +119,11 @@ class Field_Type(db.Model, SerializerMixin):
     
     field_type =  db.Column(db.String(10), nullable = False)     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
+    field = db.relationship('Field', backref='field_type_', lazy=True)
 
     def __init__(self, field_type):
         self.field_type = field_type
-
+        
 
 @app.route('/', methods=['GET', 'POST'])
 def admin():
@@ -156,7 +149,6 @@ def company():
     #     return redirect(url_for("login"))
     if request.method == 'POST':
         f = request.files['logo']
-        print("cur_cnpj = " + request.form['cur_cnpj'])
         if f.filename != '':
             f.save(dir_path + "\\static\\app-assets\\images\\company_logo\\" + secure_filename(f.filename))
         if request.form['cur_cnpj'] == "---":
@@ -182,7 +174,6 @@ def table_():
     # if not 'username' in session:
     #     return redirect(url_for("login"))
     if request.method == 'POST':
-        print("cur_id = " + str(request.form['cur_id']))
         if request.form['cur_id'] == "---":
             comp = Tbl(request.form['tbl_name'], request.form['description'])
             db.session.add(comp)
@@ -198,6 +189,32 @@ def remove_table(table_id):
     db.session.query(Tbl).filter_by(id=table_id).delete()
     db.session.commit()
     return redirect(url_for('table_'))
+
+@app.route('/field', methods=['GET', 'POST'])
+def field():
+    # if not 'username' in session:
+    #     return redirect(url_for("login"))
+    if request.method == 'POST':
+        if request.form['cur_id'] == "---":
+            comp = Field(request.form['tbl_id'], request.form['from'], request.form['to'], "", request.form['field_type'])
+            db.session.add(comp)
+        else:
+            print(str(request.form['cur_id']))
+            db.session.query(Field).filter_by(id = request.form['cur_id']).update({Field.from_:request.form['from'], Field.to:request.form['to'], Field.field_type:request.form['field_type']}, synchronize_session = False)            
+        db.session.commit()
+    field_types = Field_Type.query.order_by(Field_Type.id)
+    tbls = Tbl.query.order_by(Tbl.id)
+    # fields = Field.query.order_by(Field.id)
+    fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.id, Field.tbl_id, Field.from_, Field.to, Field_Type.field_type)
+   
+    return render_template('field.html', fields=fields, tbls=tbls, field_types=field_types)
+
+
+@app.route('/remove_field/<string:field_id>', methods=['GET', 'POST'])
+def remove_field(field_id):
+    db.session.query(Field).filter_by(id=field_id).delete()
+    db.session.commit()
+    return redirect(url_for('field'))
 
 
 
