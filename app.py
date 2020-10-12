@@ -260,6 +260,13 @@ def remove_rule(rule_id):
     db.session.commit()
     return redirect(url_for('rule'))
 
+@app.route('/edit_dashboard', methods=['GET', 'POST'])
+def edit_dashboard():
+    # if not 'username' in session:
+    #     return redirect(url_for("login"))
+    
+    return render_template('edit_dashboard.html')
+
 
 
 # @app.route('/uploader', methods = ['GET', 'POST'])

@@ -1,0 +1,151 @@
+{% extends "main.html" %}
+
+{% block styles %}
+<!-- BEGIN: Vendor CSS-->
+<link rel="stylesheet" type="text/css" href="/static/app-assets/vendors/css/extensions/dragula.min.css">
+<!-- END: Vendor CSS-->
+
+<!-- BEGIN: Page CSS-->
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/plugins/extensions/drag-and-drop.css">
+<!-- END: Page CSS-->
+
+{% endblock %}
+
+{% block content %}
+
+<div class="content-body">
+    <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+            <div class="row breadcrumbs-top">
+                <div class="col-12">
+                    <h2 class="content-header-title float-left mb-0">Drag &amp; Drop</h2>
+                    <div class="breadcrumb-wrapper col-12">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html">Home</a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="#">Extensions</a>
+                            </li>
+                            <li class="breadcrumb-item active">Drag &amp; Drop
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+            <div class="form-group breadcrum-right">
+                <div class="dropdown">
+                    <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="feather icon-settings"></i></button>
+                    <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-body">
+        <!-- Draggable cards section start -->
+        <section id="draggable-cards">
+            <div class="row" id="card-drag-area">
+                <div class="col-xl-6 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                Draggable Card 1
+                            </h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
+                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                Draggable Card 2
+                            </h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
+                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                Draggable Card 3
+                            </h4>
+                        </div>
+                        <div class="card-content collapse show">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
+                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                Draggable Card 4
+                            </h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
+                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-12 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                Draggable Card 4
+                            </h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
+                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- // Draggable cards section end -->       
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<!-- BEGIN: Page Vendor JS-->
+<script src="/static/app-assets/vendors/js/extensions/dragula.min.js"></script>
+<!-- END: Page Vendor JS-->
+
+<!-- BEGIN: Page JS-->
+<script src="/static/app-assets/js/scripts/extensions/drag-drop.js"></script>
+<!-- END: Page JS-->
+{% endblock %}
+
