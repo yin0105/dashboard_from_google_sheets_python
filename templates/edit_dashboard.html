@@ -8,6 +8,11 @@
 <!-- BEGIN: Page CSS-->
 <link rel="stylesheet" type="text/css" href="/static/app-assets/css/plugins/extensions/drag-and-drop.css">
 <!-- END: Page CSS-->
+<style>
+    .card {
+        padding: 20px;
+    }
+</style>
 
 {% endblock %}
 
@@ -47,87 +52,208 @@
             <div class="row" id="card-drag-area">
                 <div class="col-xl-6 col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">
-                                Draggable Card 1
-                            </h4>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-body">
-                                <p class="card-text">
-                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
-                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
-                                </p>
+                        <div class="row">
+                            <div class="offset-md-1 col-md-1">
+                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
+                            </div>            
+                            <div class="col-md-3">
+                                <select class="form-control" id="tbl_list">
+                                    {% for tbl in tbls %} 
+                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            <div class="col-md-1">
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                            </div>            
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="sheet_id">
+                            </div> 
                         </div>
+                        <div class="row mt-2">
+                            <div class="offset-md-1 col-md-2">
+                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
+                            </div>            
+                            <div class="col-md-1">
+                                <input type="text" class="form-control" name="sheet_header" id="sheet_header">
+                            </div>
+                            <div class="col-md-1">
+                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_range" id="sheet_range">
+                            </div>
+                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                                <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
+                            </div>                            
+                        </div>
+                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"></div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col-xl-6 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="row">
+                            <div class="offset-md-1 col-md-1">
+                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
+                            </div>            
+                            <div class="col-md-3">
+                                <select class="form-control" id="tbl_list">
+                                    {% for tbl in tbls %} 
+                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-1">
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                            </div>            
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="sheet_id">
+                            </div> 
+                        </div>
+                        <div class="row mt-2">
+                            <div class="offset-md-1 col-md-2">
+                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
+                            </div>            
+                            <div class="col-md-1">
+                                <input type="text" class="form-control" name="sheet_header" id="sheet_header">
+                            </div>
+                            <div class="col-md-1">
+                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_range" id="sheet_range">
+                            </div>
+                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                                <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
+                            </div>                            
+                        </div>
+                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"></div>
+                        
                     </div>
                 </div>
                 <div class="col-xl-6 col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">
-                                Draggable Card 2
-                            </h4>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-body">
-                                <p class="card-text">
-                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
-                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
-                                </p>
+                        <div class="row">
+                            <div class="offset-md-1 col-md-1">
+                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
+                            </div>            
+                            <div class="col-md-3">
+                                <select class="form-control" id="tbl_list">
+                                    {% for tbl in tbls %} 
+                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            <div class="col-md-1">
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                            </div>            
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="sheet_id">
+                            </div> 
                         </div>
+                        <div class="row mt-2">
+                            <div class="offset-md-1 col-md-2">
+                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
+                            </div>            
+                            <div class="col-md-1">
+                                <input type="text" class="form-control" name="sheet_header" id="sheet_header">
+                            </div>
+                            <div class="col-md-1">
+                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_range" id="sheet_range">
+                            </div>
+                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                                <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
+                            </div>                            
+                        </div>
+                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"></div>
+                        
                     </div>
                 </div>
                 <div class="col-xl-6 col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">
-                                Draggable Card 3
-                            </h4>
-                        </div>
-                        <div class="card-content collapse show">
-                            <div class="card-body">
-                                <p class="card-text">
-                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
-                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
-                                </p>
+                        <div class="row">
+                            <div class="offset-md-1 col-md-1">
+                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
+                            </div>            
+                            <div class="col-md-3">
+                                <select class="form-control" id="tbl_list">
+                                    {% for tbl in tbls %} 
+                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            <div class="col-md-1">
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                            </div>            
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="sheet_id">
+                            </div> 
                         </div>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">
-                                Draggable Card 4
-                            </h4>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-body">
-                                <p class="card-text">
-                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
-                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
-                                </p>
+                        <div class="row mt-2">
+                            <div class="offset-md-1 col-md-2">
+                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
+                            </div>            
+                            <div class="col-md-1">
+                                <input type="text" class="form-control" name="sheet_header" id="sheet_header">
                             </div>
+                            <div class="col-md-1">
+                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_range" id="sheet_range">
+                            </div>
+                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                                <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
+                            </div>                            
                         </div>
+                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"><iframe src="/static/chart/first_figure.html" width="100%" height="600px"></iframe></div>
+                        
                     </div>
                 </div>
                 <div class="col-xl-12 col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">
-                                Draggable Card 4
-                            </h4>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-body">
-                                <p class="card-text">
-                                    Jelly beans sugar plum cheesecake cookie oat cake soufflé.Tootsie roll bonbon liquorice tiramisu pie
-                                    powder.Donut sweet roll marzipan pastry cookie cake tootsie roll oat cake cookie.
-                                </p>
+                        <div class="row">
+                            <div class="offset-md-1 col-md-1">
+                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
+                            </div>            
+                            <div class="col-md-3">
+                                <select class="form-control" id="tbl_list">
+                                    {% for tbl in tbls %} 
+                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            <div class="col-md-1">
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                            </div>            
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="sheet_id">
+                            </div> 
                         </div>
+                        <div class="row mt-2">
+                            <div class="offset-md-1 col-md-2">
+                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
+                            </div>            
+                            <div class="col-md-1">
+                                <input type="text" class="form-control" name="sheet_header" id="sheet_header">
+                            </div>
+                            <div class="col-md-1">
+                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_range" id="sheet_range">
+                            </div>
+                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                                <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
+                            </div>                            
+                        </div>
+                        <div class="row col-md-12" name="table_area" style="overflow-x:auto;"></div>
+                        
                     </div>
                 </div>
             </div>
@@ -146,6 +272,7 @@
 
 <!-- BEGIN: Page JS-->
 <script src="/static/app-assets/js/scripts/extensions/drag-drop.js"></script>
+<script src="/static/app-assets/js/edit_dashboard.js"></script>
 <!-- END: Page JS-->
 {% endblock %}
 

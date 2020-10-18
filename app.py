@@ -1,20 +1,27 @@
-#!/usr/bin/env python
-from flask import Flask, render_template, request, flash, redirect, url_for, g, session
+from __future__ import print_function
+import pickle
+import os.path
+from sqlalchemy.sql.elements import Null
+
+from sqlalchemy.sql.sqltypes import DateTime
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+
+from flask import Flask, render_template, request, flash, redirect, url_for, g, session, make_response, jsonify
+from flask_login import (current_user, LoginManager, login_user, logout_user, login_required)
 from flask_bootstrap import Bootstrap
 from models import UserForm, LoginForm
-# from flask_datepicker import datepicker
 from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
 import json
-# # from proxy import MyThread, proxy_status, proxies_list
 from sqlalchemy_serializer import SerializerMixin
-# import requests
-# from bs4 import BeautifulSoup
 import os
-# import pprint
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table, Column, Integer, ForeignKey
+import plotly.graph_objects as go
+
 
 
 class Config(object):
@@ -31,8 +38,16 @@ Bootstrap(app)
 db = SQLAlchemy(app)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+current_user = Null
+
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
 
 class User(db.Model, SerializerMixin):  
+# class User(db.Model, SerializerMixin):  
     __tablename__ = 'user'
 
     serialize_only = ('name', 'lastname', 'email', 'password', 'photo', 'company', 'approve')
@@ -44,9 +59,11 @@ class User(db.Model, SerializerMixin):
     photo = db.Column(db.String(50), nullable = False) 
     companies = db.Column(db.Text, nullable = False) 
     approve = db.Column(db.Boolean, nullable = False) 
+    authenticated = db.Column(db.Boolean, nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    def __init__(self, name, lastname, email, password, photo, companies, approve):
+
+    def __init__(self, name, lastname, email, password, photo="", companies="", approve=0):
         self.name = name
         self.lastname = lastname
         self.email = email
@@ -54,6 +71,23 @@ class User(db.Model, SerializerMixin):
         self.photo = photo
         self.companies = companies
         self.approve = approve
+
+    def to_json(self):        
+        return {"name": self.name,
+                "email": self.email}
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):   
+        return True           
+
+    def is_anonymous(self):
+        return False          
+
+    def get_id(self):         
+        return str(self.email)
+    
 
 
 class Company(db.Model, SerializerMixin):  
@@ -125,9 +159,90 @@ class Field_Type(db.Model, SerializerMixin):
         self.field_type = field_type
         
 
+@login_manager.user_loader
+def user_loader(user_id):
+    return User.query.filter_by(id=user_id).first()
+
+
 @app.route('/', methods=['GET', 'POST'])
 def admin():
-    return render_template('main.html')
+    if 'connected' in request.cookies:
+        print("connected = " + request.cookies.get('connected'))
+        if request.cookies.get('connected') == "true" :
+            return render_template('main.html')
+    return redirect(url_for("login"))
+
+@app.route('/login', methods = ['POST', 'GET'])
+def login():    
+    resp = make_response(render_template('auth-login.html'))
+    if request.cookies.get('email'):
+        print("cookie  email: " + request.cookies.get('email'))
+    if request.method == 'POST':
+        print("remember = " + request.form['remember'])
+        for i in request.form:
+            print(str(i))
+        print(request.form['email'] + "::::::" + request.form['password'])
+        if os.environ.get('ADMIN_EMAIL') == request.form['email'] and os.environ.get('ADMIN_PASSWORD') == request.form['password']:
+            session['email'] = request.form['email']
+            return redirect(url_for('admin'))
+        else:
+            user = User.query.filter_by(email=request.form['email']).first()
+            if user :
+                if user.password == request.form['password'] :
+                    user.authenticated = True
+                    db.session.add(user)
+                    db.session.commit()
+                    current_user = user
+                    resp = make_response(redirect(url_for('admin')))
+                    resp.set_cookie('email', request.form['email'])
+                    resp.set_cookie('password', request.form['password'])
+                    resp.set_cookie('remember', request.form['remember'])
+                    resp.set_cookie('photo', user.photo)
+                    resp.set_cookie('user_name', user.name)
+                    resp.set_cookie('user_lastname', user.lastname)
+                    resp.set_cookie('connected', 'true')
+                    login_user(user, remember=True)
+                    return resp
+                else:
+                    return render_template('auth-login.html', msg='Password is incorrect.')
+                
+            else:
+                return render_template('auth-login.html', msg='Not a registered user.')
+    else:
+        if 'remember' in request.cookies:
+            if request.cookies.get('remember') == "true" :
+                return render_template('auth-login.html', email=request.cookies.get('email'), password=request.cookies.get('password'))
+    return resp
+
+@app.route("/logout", methods=["GET"])
+# @login_required
+def logout():
+    print("logout")
+    """Logout the current user."""
+    # user = current_user
+    # user.authenticated = False
+    # db.session.add(user)
+    # db.session.commit()
+    resp = make_response(redirect(url_for("login")))
+    print("1")
+    if 'connected' in request.cookies:
+        print("ok")
+        resp.set_cookie('connected', 'false')
+    logout_user()
+    return resp
+    
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        user = db.session.query(User).filter_by(email=request.form['email']).first()
+        if not user:
+            user = User(request.form['name'], request.form['lastname'], request.form['email'], request.form['password'])
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for("login"))
+
+    return render_template('auth-register.html')
 
 
 @app.route('/users', methods=['GET', 'POST'])
@@ -198,8 +313,10 @@ def field():
     tbl_id = -1
     if len(tbls.all()) > 0:
         tbl_id = tbls.first().id
-    print("tbl_id = " + str(tbl_id))
-    return redirect(url_for('field_of_table', tbl_id=tbl_id))
+        print("tbl_id = " + str(tbl_id))
+        return redirect(url_for('field_of_table', tbl_id=tbl_id))
+    else:
+        return render_template('field.html', tbl_id=tbl_id)
 
 @app.route('/field/<int:tbl_id>', methods=['GET', 'POST'])
 def field_of_table(tbl_id):
@@ -236,8 +353,10 @@ def rule():
     tbl_id = -1
     if len(tbls.all()) > 0:
         tbl_id = tbls.first().id
-    print("tbl_id = " + str(tbl_id))
-    return redirect(url_for('rule_of_table', tbl_id=tbl_id))
+        print("tbl_id = " + str(tbl_id))
+        return redirect(url_for('rule_of_table', tbl_id=tbl_id))
+    else:
+        return render_template('rule.html', tbl_id=tbl_id)
 
 @app.route('/rule/<int:tbl_id>', methods=['GET', 'POST'])
 def rule_of_table(tbl_id):
@@ -264,168 +383,66 @@ def remove_rule(rule_id):
 def edit_dashboard():
     # if not 'username' in session:
     #     return redirect(url_for("login"))
-    
-    return render_template('edit_dashboard.html')
+    tbls = Tbl.query.order_by(Tbl.id)
+    return render_template('edit_dashboard.html', tbls=tbls)
 
 
+@app.route('/get_sheet_data/<string:sheet_id>/<int:sheet_row_count>/<string:sheet_range>', methods=['GET', 'POST'])
+def get_sheet_data(sheet_id, sheet_row_count, sheet_range):
+    creds = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
 
-# @app.route('/uploader', methods = ['GET', 'POST'])
-# def upload_file():
-#    if request.method == 'POST':
-#         f = request.files['file']
-#         if f.filename != '':
-#             f.save(dir_path + "\\static\\app-assets\\images\\company_logo\\" + secure_filename(f.filename))
-    
-#       return 'file uploaded successfully'
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            creds = flow.run_local_server(port=20000)
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
 
+    service = build('sheets', 'v4', credentials=creds)
 
-# @app.route('/login', methods = ['POST', 'GET'])
-# def login():
-#     # print(request.form['name'] + "::::::" + request.form['password'])
-#     if request.method == 'POST':
-#         if os.environ.get('ADMIN_NAME') == request.form['name'] and os.environ.get('ADMIN_PASSWORD') == request.form['password']:
-#             session['username'] = request.form['name']
-#             return redirect(url_for('admin'))
-   
-#     return render_template('login.html', form=LoginForm())
+    # Call the Sheets API
+    sheet = service.spreadsheets()
+    result = sheet.values().get(spreadsheetId=sheet_id, range=sheet_range).execute()
+    values = result.get('values', [])
 
-# @app.route('/logout', methods = ['POST', 'GET'])
-# def logout():
-#     session.pop("username", None)
-#     return redirect(url_for("login"))
+    # Bar Chart (1)
+    # fig = go.Figure(data=go.Bar(y=[4, 5, 2, 3, 1]))
+    # fig.write_html('static/chart/third_figure.html', auto_open=False)
 
-# @app.route('/add_user', methods=['GET', 'POST'])
-# def add_user():
-#     form = UserForm(request.form)
-    
-#     if 'type_' in request.form:# == "save":
-
-#         if not form.validate_on_submit():
-#             flash('Please enter all the fields', 'error')
-#         else:
-#             str = ''
-#             for i in range(len(request.form.getlist('td_search[]'))):
-#                 if request.form.getlist('td_search[]')[i]:
-#                     if str != '' :
-#                         str += ','
-#                     str += '{"s": "' + request.form.getlist('td_search[]')[i] +'", '
-#                     str += '"m": "' + request.form.getlist('td_miles[]')[i] +'", '
-#                     str += '"t": "' + request.form.getlist('td_time[]')[i] +'"}'
-#             str = '{"locationList":[' + str +']}'
-
-#             user_ = User(request.form['name'], request.form['user_id'], request.form['password'], request.form['email'], request.form['phone'], request.form['dates'], str)
+    # Bar Chart (multi)
+    # chart_data = []
+    # for row in values:
+    #     chart_data.append(go.Bar(name='', x=values[0], y=row))
             
-#             db.session.add(user_)
-#             db.session.commit()
-#             flash('Record was successfully added')
-#             return redirect(url_for('admin'))   
+    # fig = go.Figure(data=chart_data)
+    # chart_id = str(int(DateTime()))
+    # fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
+
+
+    # [
+    #     go.Bar(name='SF Zoo', x=animals, y=[20, 14, 23]),
+    #     go.Bar(name='LA Zoo', x=animals, y=[12, 18, 29])
+    # ])
+    # Change the bar mode
+    # fig.update_layout(barmode='group')
+    # fig.show()
     
-#     form.locations = [{"search": "", "miles": "", "time": ""}]
-#     return render_template('user.html', form=form, )
-
-
-# @app.route('/edit_user', methods=['POST'])
-# def edit_user():  
-#     form = UserForm(request.form)
-    
-#     # if request.method == 'POST':
-#     if request.form['type_'] == "save":
-#         if not form.validate_on_submit():
-#             flash('Please enter all the fields', 'error')
-#         else:
-#             str = ''
-#             for i in range(len(request.form.getlist('td_search[]'))):
-#                 if request.form.getlist('td_search[]')[i]:
-#                     if str != '' :
-#                         str += ','
-#                     str += '{"s": "' + request.form.getlist('td_search[]')[i] +'", '
-#                     str += '"m": "' + request.form.getlist('td_miles[]')[i] +'", '
-#                     str += '"t": "' + request.form.getlist('td_time[]')[i] +'"}'
-#             str = '{"locationList":[' + str +']}'
-           
-            
-#             db.session.query(User).filter_by(id = request.form['id']).update({User.name: request.form['name'], User.user_id: request.form['user_id'], User.password: request.form['password'], User.email: request.form['email'], User.phone: request.form['phone'], User.dates: request.form['dates'], User.locations: str}, synchronize_session = False)
-#             db.session.commit()
-#             flash('Record was successfully updated')
-#             return redirect(url_for('admin'))   
-#     else:
-#         user_ = User.query.filter_by(id=request.form['user_id']).first()
-#     user_.locations = json.loads(user_.locations)
-#     return render_template('user.html', form=form, user=user_)
-
-
-# @app.route('/del_user/<int:user_id>', methods=['GET', 'POST'])
-# def del_user(user_id):
-#     db.session.query(User).filter_by(id=user_id).delete()
-#     db.session.commit()
-
-#     return ""
-
-
-# @app.route('/view_log', methods=['POST'])
-# def view_log():  
-#     log_list = []
-#     try:
-#         log_file = open('logs/' + request.form['user_id'] + '.log', 'r') 
-#         while True: 
-#             line = log_file.readline()                
-#             if not line: 
-#                 break
-#             if line.find("/") < 0:
-#                 log_list.append(line.strip())                       
-#     except:
-#         pass
-#     return render_template('log.html', log_list = log_list)
-
-
-# @app.route('/calendar', methods=['GET', 'POST'])
-# def calendar():
-#     return render_template('calendar.html')
-
-
-# @app.route('/ajax_get_user_status', methods=['GET', 'POST'])
-# def ajax_get_user_status():
-#     users = User.query.order_by(User.name)
-#     result = ""
-#     for user_ in users:
-#         if str(user_.id) in proxy_status:
-#             result += str(proxy_status[str(user_.id)]) + ","
-#         else:
-#             result += "0,"
-#     result = result[:-1]
-
-#     return result
-
-
-# @app.route('/start_proxy/<userId>', methods=['GET', 'POST'])
-# def start_proxy(userId):
-#     try:
-#         if proxy_status[userId] >= 1:
-#             return ""
-#     except:
-#         pass
-
-#     proxy_status[userId] = 1
-#     print("proxy_status[" + userId + "] = " + str(proxy_status[userId]))
-#     db.session.query(User).filter_by(id = userId).update({User.status: 1}, synchronize_session = False)
-#     db.session.commit()
-
-#     user_ = User.query.filter_by(id=userId).first()
-#     user_.locations = json.loads(user_.locations)
-
-#     t = MyThread(userId, user_.to_dict())
-#     t.start()
-
-#     return ""
-        
-
-# @app.route('/stop_proxy/<userId>', methods=['GET', 'POST'])
-# def stop_proxy(userId):
-#     proxy_status[userId] = 0
-#     db.session.query(User).filter_by(id = userId).update({User.status: 0}, synchronize_session = False)
-#     db.session.commit()
-#     return ""
-
+    resp = ""
+    # resp = '<iframe src="/static/chart/' + chart_id + '.html" width="100%" height="600px"></iframe>'
+    if values:
+        resp = "<table border='1' style='margin-left:auto; margin-right:auto'>"
+        for row in values:
+            resp += "<tr>"
+            for cell in row:
+                resp += "<td>" + cell + "</td>"
+            resp += "</tr>"
+        resp += "</table>"
+    return resp
 
 
 if __name__ == '__main__':
