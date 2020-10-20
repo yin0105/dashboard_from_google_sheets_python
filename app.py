@@ -161,6 +161,33 @@ class Field_Type(db.Model, SerializerMixin):
 
     def __init__(self, field_type):
         self.field_type = field_type
+
+
+class Dashboard(db.Model, SerializerMixin):  
+    __tablename__ = 'dashboard'
+
+    serialize_only = ('user_id', 'name', 'table_id', 'spread_id', 'sheet_name', 'range', 'src')
+    
+    user_id =  db.Column(db.Integer, nullable = False) 
+    name =  db.Column(db.String(30), nullable = False) 
+    table_id =  db.Column(db.Integer, nullable = False)     
+    spread_id = db.Column(db.String(50), nullable = False) 
+    sheet_name =  db.Column(db.String(30), nullable = False) 
+    range =  db.Column(db.String(10), nullable = False) 
+    src =  db.Column(db.String(50), nullable = False) 
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    def __init__(self, user_id, name, table_id, spread_id, sheet_name, range, src):
+        self.user_id = user_id
+        self.name = name
+        self.table_id = table_id
+        self.spread_id = spread_id                
+        self.sheet_name = sheet_name
+        self.range = range
+        self.src = src
+
+
+
         
 
 @login_manager.user_loader
@@ -200,6 +227,7 @@ def login():
                     print("admin = " + str(user.admin))
                     print("approve = " + str(user.approve))
                     resp = make_response(redirect(url_for('admin')))
+                    resp.set_cookie('user_id', str(user.id))
                     resp.set_cookie('email', request.form['email'])
                     resp.set_cookie('password', request.form['password'])
                     resp.set_cookie('remember', request.form['remember'])
@@ -446,14 +474,24 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
     resp = ""
     # resp = '<iframe src="/static/chart/' + chart_id + '.html" width="100%" height="600px"></iframe>'
     if values:
+        chart_id = str(int(datetime.now().timestamp()))
         if chart_type == "table":
-            resp = "<table border='1' style='margin-left:auto; margin-right:auto'>"
-            for row in values:
-                resp += "<tr>"
-                for cell in row:
-                    resp += "<td>" + cell + "</td>"
-                resp += "</tr>"
-            resp += "</table>"
+            
+            with open('static/chart/' + chart_id + '.inc', 'w', encoding="utf-8", newline='') as inc_file:
+                inc_file.write("<table border='1' style='margin-left:auto; margin-right:auto' name='" + chart_id + ".inc'>")
+                resp = "<table border='1' style='margin-left:auto; margin-right:auto' name='" + chart_id + ".inc'>"
+                for row in values:
+                    inc_file.write("<tr>")
+                    resp += "<tr>"
+                    for cell in row:
+                        inc_file.write("<td>" + cell + "</td>")
+                        resp += "<td>" + cell + "</td>"
+                    inc_file.write("</tr>")
+                    resp += "</tr>"
+                inc_file.write("</table>")
+                resp += "</table>"
+                inc_file.close()
+            
         else:
             chart_data = []
             x_data = []
@@ -533,10 +571,21 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
                         fig.add_trace(go.Bar(x=x_data[1:], y=[row[col] for row in values[1:]]))
                 
             
-            chart_id = str(int(datetime.now().timestamp()))
             fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
-            resp = '<iframe src="/static/chart/' + chart_id + '.html" width="100%" height="600px"></iframe>'
+            resp = '<iframe src="/static/chart/' + chart_id + '.html" name="' + chart_id + '.html" width="100%" height="600px"></iframe>'
     return resp
+
+# url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_row_count + "/" + sheet_range + "/" + tbl_id + "/" + src,
+@app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:dash_name>', methods=['GET', 'POST'])
+def save_dashboard(sheet_id, sheet_name, sheet_row_count, sheet_range, tbl_id, src, dash_name):
+    if request.method == 'POST':
+        dash = Dashboard(request.cookies.get('user_id'), dash_name, tbl_id, sheet_id, sheet_name, sheet_range, src)
+        db.session.add(dash)
+        db.session.commit()
+        # return redirect(url_for("login"))
+        return "success"
+
+    return "fail"
 
 
 if __name__ == '__main__':
