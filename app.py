@@ -504,6 +504,34 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
                 for row in values:
                     x_data.append(row[0])
                 fig = go.Figure(go.Funnel(y = x_data[1:], x= [row[1] for row in values[1:]]))
+
+            elif chart_type == "area":
+                fig = go.Figure()
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    if col == 1:
+                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in values[1:]], fill='tozeroy'))
+                    else:
+                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in values[1:]], fill='tonexty'))
+
+            elif chart_type == "radar":
+                fig = go.Figure()
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    fig.add_trace(go.Scatterpolar(r=[row[col] for row in values[1:]], theta=x_data[1:], fill='toself', name=''))
+
+            elif chart_type == "combinations":
+                fig = go.Figure()
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    if col == 1:
+                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in values[1:]]))
+                    else :
+                        fig.add_trace(go.Bar(x=x_data[1:], y=[row[col] for row in values[1:]]))
+                
             
             chart_id = str(int(datetime.now().timestamp()))
             fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
@@ -513,3 +541,5 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+    
+
