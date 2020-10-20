@@ -11,7 +11,8 @@ $("#register").click(function() {
     if ($("#password").val() != $("#conf_password").val()) {
         alert("Senha incorreta");
         $("#conf_password").val("");
-        $("#conf_password").focus();
+        $("#conf_password").focus();        
+    }else {
         $("#myform").submit()
     }
 })

@@ -21,6 +21,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table, Column, Integer, ForeignKey
 import plotly.graph_objects as go
+from datetime import datetime
 
 
 
@@ -50,7 +51,7 @@ class User(db.Model, SerializerMixin):
 # class User(db.Model, SerializerMixin):  
     __tablename__ = 'user'
 
-    serialize_only = ('name', 'lastname', 'email', 'password', 'photo', 'company', 'approve')
+    serialize_only = ('name', 'lastname', 'email', 'password', 'photo', 'company', 'approve', 'authenticated', 'admin')
     
     name =  db.Column(db.String(30), nullable = False) 
     lastname =  db.Column(db.String(30), nullable = False)     
@@ -60,10 +61,11 @@ class User(db.Model, SerializerMixin):
     companies = db.Column(db.Text, nullable = False) 
     approve = db.Column(db.Boolean, nullable = False) 
     authenticated = db.Column(db.Boolean, nullable = False) 
+    admin = db.Column(db.Boolean, nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
 
-    def __init__(self, name, lastname, email, password, photo="", companies="", approve=0):
+    def __init__(self, name, lastname, email, password, photo="", companies="", approve=0, authenticated=0, admin=0):
         self.name = name
         self.lastname = lastname
         self.email = email
@@ -71,6 +73,8 @@ class User(db.Model, SerializerMixin):
         self.photo = photo
         self.companies = companies
         self.approve = approve
+        self.authenticated = authenticated
+        self.admin = admin
 
     def to_json(self):        
         return {"name": self.name,
@@ -193,6 +197,8 @@ def login():
                     db.session.add(user)
                     db.session.commit()
                     current_user = user
+                    print("admin = " + str(user.admin))
+                    print("approve = " + str(user.approve))
                     resp = make_response(redirect(url_for('admin')))
                     resp.set_cookie('email', request.form['email'])
                     resp.set_cookie('password', request.form['password'])
@@ -200,6 +206,11 @@ def login():
                     resp.set_cookie('photo', user.photo)
                     resp.set_cookie('user_name', user.name)
                     resp.set_cookie('user_lastname', user.lastname)
+                    # resp.set_cookie('approve', user.approve)
+                    if user.admin:
+                        resp.set_cookie('admin', '1')
+                    else:
+                        resp.set_cookie('admin', '0')
                     resp.set_cookie('connected', 'true')
                     login_user(user, remember=True)
                     return resp
@@ -387,8 +398,8 @@ def edit_dashboard():
     return render_template('edit_dashboard.html', tbls=tbls)
 
 
-@app.route('/get_sheet_data/<string:sheet_id>/<int:sheet_row_count>/<string:sheet_range>', methods=['GET', 'POST'])
-def get_sheet_data(sheet_id, sheet_row_count, sheet_range):
+@app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<string:chart_type>', methods=['GET', 'POST'])
+def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_type):
     creds = None
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
@@ -407,7 +418,7 @@ def get_sheet_data(sheet_id, sheet_row_count, sheet_range):
 
     # Call the Sheets API
     sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=sheet_id, range=sheet_range).execute()
+    result = sheet.values().get(spreadsheetId=sheet_id, range=sheet_name + "!" + sheet_range).execute()
     values = result.get('values', [])
 
     # Bar Chart (1)
@@ -435,13 +446,68 @@ def get_sheet_data(sheet_id, sheet_row_count, sheet_range):
     resp = ""
     # resp = '<iframe src="/static/chart/' + chart_id + '.html" width="100%" height="600px"></iframe>'
     if values:
-        resp = "<table border='1' style='margin-left:auto; margin-right:auto'>"
-        for row in values:
-            resp += "<tr>"
-            for cell in row:
-                resp += "<td>" + cell + "</td>"
-            resp += "</tr>"
-        resp += "</table>"
+        if chart_type == "table":
+            resp = "<table border='1' style='margin-left:auto; margin-right:auto'>"
+            for row in values:
+                resp += "<tr>"
+                for cell in row:
+                    resp += "<td>" + cell + "</td>"
+                resp += "</tr>"
+            resp += "</table>"
+        else:
+            chart_data = []
+            x_data = []
+            fig = Null
+            if chart_type == "columns":
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    chart_data.append(go.Bar(name='', x=x_data[1:], y= [row[col] for row in values[1:]]))
+                fig = go.Figure(data=chart_data)
+            
+            elif chart_type == "bars":
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    chart_data.append(go.Bar(name='', y=x_data[1:], x= [row[col] for row in values[1:]], orientation='h'))
+                fig = go.Figure(data=chart_data)
+            
+            elif chart_type == "lines":
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    chart_data.append(go.Scatter(name='', x=x_data[1:], y= [row[col] for row in values[1:]]))
+                fig = go.Figure(data=chart_data)
+            
+            elif chart_type == "pizza_1":
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    chart_data.append(go.Pie(name='', labels=x_data[1:], values= [row[col] for row in values[1:]]))
+                fig = go.Figure(data=chart_data)
+            
+            elif chart_type == "pizza_2":
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    chart_data.append(go.Pie(name='', labels=x_data[1:], values= [row[col] for row in values[1:]], hole = 0.3))
+                fig = go.Figure(data=chart_data)
+            
+            elif chart_type == "histogram":
+                for row in values:
+                    x_data.append(row[0])
+                for col in range(1, len(values[0])):
+                    chart_data.append(go.Histogram(name='', x= [row[col] for row in values[1:]]))
+                fig = go.Figure(data=chart_data)
+
+            elif chart_type == "funnel":
+                for row in values:
+                    x_data.append(row[0])
+                fig = go.Figure(go.Funnel(y = x_data[1:], x= [row[1] for row in values[1:]]))
+            
+            chart_id = str(int(datetime.now().timestamp()))
+            fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
+            resp = '<iframe src="/static/chart/' + chart_id + '.html" width="100%" height="600px"></iframe>'
     return resp
 
 

@@ -18,34 +18,7 @@
 
 {% block content %}
 
-<div class="content-body">
-    <div class="content-header row">
-        <div class="content-header-left col-md-9 col-12 mb-2">
-            <div class="row breadcrumbs-top">
-                <div class="col-12">
-                    <h2 class="content-header-title float-left mb-0">Drag &amp; Drop</h2>
-                    <div class="breadcrumb-wrapper col-12">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">Home</a>
-                            </li>
-                            <li class="breadcrumb-item"><a href="#">Extensions</a>
-                            </li>
-                            <li class="breadcrumb-item active">Drag &amp; Drop
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
-            <div class="form-group breadcrum-right">
-                <div class="dropdown">
-                    <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="feather icon-settings"></i></button>
-                    <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a></div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="content-body">    
     <div class="content-body">
         <!-- Draggable cards section start -->
         <section id="draggable-cards">
@@ -53,7 +26,7 @@
                 <div class="col-xl-6 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="row">
-                            <div class="offset-md-1 col-md-1">
+                            <div class="col-md-1">
                                 <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
                             </div>            
                             <div class="col-md-3">
@@ -64,17 +37,23 @@
                                 </select>
                             </div>
                             <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
                             </div>            
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" name="sheet_id">
+                            </div> 
+                            <div class="col-md-1">
+                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_name">
                             </div> 
                         </div>
                         <div class="row mt-2">
-                            <div class="offset-md-1 col-md-2">
+                            <div class="col-md-2">
                                 <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
                             </div>            
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_header" id="sheet_header">
                             </div>
                             <div class="col-md-1">
@@ -83,19 +62,21 @@
                             <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_range" id="sheet_range">
                             </div>
-                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                            <div class="offset-md-1 col-md-1">
+                                <input type="radio" class="form-control" name="ch_chart_type">
+                            </div>
+                            <!-- <div class="col-md-2 mt-1 mb-2">
                                 <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
-                            </div>                            
+                            </div>                             -->                            
                         </div>
-                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"></div>
-                        
+                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
                     </div>
                     
                 </div>
                 <div class="col-xl-6 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="row">
-                            <div class="offset-md-1 col-md-1">
+                            <div class="col-md-1">
                                 <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
                             </div>            
                             <div class="col-md-3">
@@ -106,17 +87,23 @@
                                 </select>
                             </div>
                             <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
                             </div>            
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" name="sheet_id">
+                            </div> 
+                            <div class="col-md-1">
+                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_name">
                             </div> 
                         </div>
                         <div class="row mt-2">
-                            <div class="offset-md-1 col-md-2">
+                            <div class="col-md-2">
                                 <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
                             </div>            
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_header" id="sheet_header">
                             </div>
                             <div class="col-md-1">
@@ -125,18 +112,20 @@
                             <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_range" id="sheet_range">
                             </div>
-                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                            <div class="offset-md-1 col-md-1">
+                                <input type="radio" class="form-control" name="ch_chart_type">
+                            </div>
+                            <!-- <div class="col-md-2 mt-1 mb-2">
                                 <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
-                            </div>                            
+                            </div>                             -->                            
                         </div>
-                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"></div>
-                        
+                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
                     </div>
                 </div>
                 <div class="col-xl-6 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="row">
-                            <div class="offset-md-1 col-md-1">
+                            <div class="col-md-1">
                                 <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
                             </div>            
                             <div class="col-md-3">
@@ -147,17 +136,23 @@
                                 </select>
                             </div>
                             <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
                             </div>            
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" name="sheet_id">
+                            </div> 
+                            <div class="col-md-1">
+                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_name">
                             </div> 
                         </div>
                         <div class="row mt-2">
-                            <div class="offset-md-1 col-md-2">
+                            <div class="col-md-2">
                                 <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
                             </div>            
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_header" id="sheet_header">
                             </div>
                             <div class="col-md-1">
@@ -166,18 +161,20 @@
                             <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_range" id="sheet_range">
                             </div>
-                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                            <div class="offset-md-1 col-md-1">
+                                <input type="radio" class="form-control" name="ch_chart_type">
+                            </div>
+                            <!-- <div class="col-md-2 mt-1 mb-2">
                                 <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
-                            </div>                            
+                            </div>                             -->                            
                         </div>
-                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"></div>
-                        
+                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
                     </div>
                 </div>
                 <div class="col-xl-6 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="row">
-                            <div class="offset-md-1 col-md-1">
+                            <div class="col-md-1">
                                 <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
                             </div>            
                             <div class="col-md-3">
@@ -188,17 +185,23 @@
                                 </select>
                             </div>
                             <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
                             </div>            
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" name="sheet_id">
+                            </div> 
+                            <div class="col-md-1">
+                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_name">
                             </div> 
                         </div>
                         <div class="row mt-2">
-                            <div class="offset-md-1 col-md-2">
+                            <div class="col-md-2">
                                 <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
                             </div>            
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_header" id="sheet_header">
                             </div>
                             <div class="col-md-1">
@@ -207,18 +210,20 @@
                             <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_range" id="sheet_range">
                             </div>
-                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                            <div class="offset-md-1 col-md-1">
+                                <input type="radio" class="form-control" name="ch_chart_type">
+                            </div>
+                            <!-- <div class="col-md-2 mt-1 mb-2">
                                 <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
-                            </div>                            
+                            </div>                             -->                            
                         </div>
-                        <div class="row col-md-12" name="table_area" style="margin: auto; overflow-x:auto;"><iframe src="/static/chart/first_figure.html" width="100%" height="600px"></iframe></div>
-                        
+                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
                     </div>
                 </div>
                 <div class="col-xl-12 col-md-12 col-sm-12">
                     <div class="card">
                         <div class="row">
-                            <div class="offset-md-1 col-md-1">
+                            <div class="col-md-1">
                                 <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
                             </div>            
                             <div class="col-md-3">
@@ -229,17 +234,23 @@
                                 </select>
                             </div>
                             <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Sheet ID: </label> 
+                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
                             </div>            
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" name="sheet_id">
+                            </div> 
+                            <div class="col-md-1">
+                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
+                            </div>            
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="sheet_name">
                             </div> 
                         </div>
                         <div class="row mt-2">
-                            <div class="offset-md-1 col-md-2">
+                            <div class="col-md-2">
                                 <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
                             </div>            
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_header" id="sheet_header">
                             </div>
                             <div class="col-md-1">
@@ -248,12 +259,14 @@
                             <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_range" id="sheet_range">
                             </div>
-                            <div class="offset-md-2 col-md-2 mt-1 mb-2">
+                            <div class="offset-md-1 col-md-1">
+                                <input type="radio" class="form-control" name="ch_chart_type">
+                            </div>
+                            <!-- <div class="col-md-2 mt-1 mb-2">
                                 <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
-                            </div>                            
+                            </div>                             -->                            
                         </div>
-                        <div class="row col-md-12" name="table_area" style="overflow-x:auto;"></div>
-                        
+                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
                     </div>
                 </div>
             </div>

@@ -42,6 +42,9 @@
     <!-- END: Custom CSS-->
 
     {% block styles %}
+    <style>
+        
+    </style>
     {% endblock %}
 
 </head>
@@ -73,7 +76,7 @@
             </div>
         </div>
     </nav>
-    <ul class="main-search-list-defaultlist d-none">
+    <!-- <ul class="main-search-list-defaultlist d-none">
         <li class="d-flex align-items-center"><a class="pb-25" href="#">
                 <h6 class="text-primary mb-0">Files</h6>
             </a></li>
@@ -149,7 +152,7 @@
         <li class="auto-suggestion d-flex align-items-center justify-content-between cursor-pointer"><a class="d-flex align-items-center justify-content-between w-100 py-50">
                 <div class="d-flex justify-content-start"><span class="mr-75 feather icon-alert-circle"></span><span>No results found.</span></div>
             </a></li>
-    </ul>
+    </ul> -->
     <!-- END: Header-->
 
 
@@ -168,8 +171,8 @@
         <div class="main-menu-content">
             <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
                 <li class=" navigation-header"><span>Admin</span></li>
-                <li class=" nav-item"><a href="index.html"><i class="feather icon-home"></i><span class="menu-title" data-i18n="Dashboard">Dashboard</span></a></li>
-                <li class=" nav-item"><a href="/users"><i class="feather icon-user"></i><span class="menu-title" data-i18n="User">User</span></a></li>
+                <li class=" nav-item" id="user_menu"><a href="index.html"><i class="feather icon-home"></i><span class="menu-title" data-i18n="Dashboard">Dashboard</span></a></li>
+                <li class=" nav-item" id="company_menu"><a href="/users"><i class="feather icon-user"></i><span class="menu-title" data-i18n="User">User</span></a></li>
                 <li class=" nav-item"><a href="/company"><i class="feather icon-copy"></i><span class="menu-title" data-i18n="Company">Company</span></a></li>
                 <li class=" navigation-header"><span>General</span></li>
                 <li class=" nav-item"><a href="/table"><i class="feather icon-grid"></i><span class="menu-title" data-i18n="Colors">Tables</span></a></li>
@@ -179,10 +182,23 @@
                 <li class=" nav-item"><a href="colors.html"><i class="feather icon-loader"></i><span class="menu-title" data-i18n="Colors">Load Table</span></a></li>
                 <li class=" nav-item"><a href="#"><i class="feather icon-list"></i><span class="menu-title" data-i18n="Data List">Indicators</span></a>
                     <ul class="menu-content">
-                        <li><a href="data-list-view.html"><i class="feather icon-circle"></i><span class="menu-item" data-i18n="List View">List View</span></a>
-                        </li>
-                        <li><a href="data-thumb-view.html"><i class="feather icon-circle"></i><span class="menu-item" data-i18n="Thumb View">Thumb View</span></a>
-                        </li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_columns.png" name="btn_chart_columns" class="btTxt" id="btn_chart_columns"/></li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_combinations.png" name="btn_chart_combinations" class="btTxt" id="btn_chart_combinations"/></li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_bars.png" name="btn_chart_bars" class="btTxt" id="btn_chart_bars"/></li>
+                    </ul>
+                    <ul class="menu-content">
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_histogram.png" name="btn_chart_histogram" class="btTxt" id="btn_chart_histogram"/></li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_lines.png" name="btn_chart_lines" class="btTxt" id="btn_chart_lines"/></li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_area.png" name="btn_chart_area" class="btTxt" id="btn_chart_area"/></li>
+                    </ul>
+                    <ul class="menu-content">
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_pizza_1.png" name="btn_chart_pizza_1" class="btTxt" id="btn_chart_pizza_1"/></li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_pizza_2.png" name="btn_chart_pizza_2" class="btTxt" id="btn_chart_pizza_2"/></li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_radar.png" name="btn_chart_radar" class="btTxt" id="btn_chart_radar"/></li>
+                    </ul>
+                    <ul class="menu-content">
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_chart_funnel.png" name="btn_chart_funnel" class="btTxt" id="btn_chart_funnel"/></li>
+                        <li class="img_li"><input type="image" src="/static/app-assets/images/chart_btn_img/btn_table.png" name="btn_table" class="btTxt" id="btn_table"/></li>
                     </ul>
                 </li>
             </ul>
@@ -257,6 +273,11 @@
         console.log("phpto = " + "/static/app-assets/images/user_photo/" + getCookie("photo"))
         $("#avatar_photo").attr("src", "/static/app-assets/images/user_photo/" + getCookie("photo"))
         $("#avatar_name").html(getCookie("user_name") + " " + getCookie("user_lastname"))
+        if (getCookie("admin") == '0') {
+            // console.log("OK")
+            $("#user_menu").css("display", "none")
+            $("#company_menu").css("display", "none")
+        }
         console.log("new photo = " + $("#avatar_photo").attr("src"))
     </script>
 
