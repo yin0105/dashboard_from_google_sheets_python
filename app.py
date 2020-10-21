@@ -1,4 +1,5 @@
 from __future__ import print_function
+from os import name
 import pickle
 import os.path
 from sqlalchemy.sql.elements import Null
@@ -200,7 +201,7 @@ def admin():
     if 'connected' in request.cookies:
         print("connected = " + request.cookies.get('connected'))
         if request.cookies.get('connected') == "true" :
-            return render_template('main.html')
+            return redirect(url_for("show_dashboard"))
     return redirect(url_for("login"))
 
 @app.route('/login', methods = ['POST', 'GET'])
@@ -572,10 +573,17 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
                 
             
             fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
-            resp = '<iframe src="/static/chart/' + chart_id + '.html" name="' + chart_id + '.html" width="100%" height="600px"></iframe>'
+            resp = '<iframe src="/static/chart/' + chart_id + '.html" name="' + chart_id + '.html" width="100%" height="600px" style="border:none;"></iframe>'
     return resp
 
-# url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_row_count + "/" + sheet_range + "/" + tbl_id + "/" + src,
+
+@app.route('/del_dash/<string:dash_name>', methods=['GET', 'POST'])
+def del_dashboard(dash_name):
+    if request.method == 'POST':
+        db.session.query(Dashboard).filter(Dashboard.user_id==request.cookies.get('user_id'), Dashboard.name==dash_name).delete()
+    return
+
+
 @app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:dash_name>', methods=['GET', 'POST'])
 def save_dashboard(sheet_id, sheet_name, sheet_row_count, sheet_range, tbl_id, src, dash_name):
     if request.method == 'POST':
@@ -586,6 +594,31 @@ def save_dashboard(sheet_id, sheet_name, sheet_row_count, sheet_range, tbl_id, s
         return "success"
 
     return "fail"
+
+@app.route('/dashboard', methods=['GET', 'POST'])
+def show_dashboard():
+    dashs = db.session.query(Dashboard).group_by(Dashboard.name).filter_by(user_id=request.cookies.get('user_id')).order_by(Dashboard.id).all()
+    dash_out = []
+    for dash in dashs:        
+        dash_out_elem = {}
+        dash_out_elem.update({"name" : dash.name})
+        dash_cards = db.session.query(Dashboard).filter(Dashboard.user_id==request.cookies.get('user_id'), Dashboard.name==dash.name).all()
+        dash_out_elem_content = []
+        for dash_card in dash_cards:
+            if dash_card.src[-3:] == "inc":
+                with open('static/chart/' + dash_card.src, 'r', encoding="utf-8") as inc_file:
+                    inc_file_content = ""
+                    for f in inc_file.readlines():
+                        inc_file_content += f
+                    dash_out_elem_content.append(inc_file_content)
+            else:
+                dash_out_elem_content.append('<iframe src="/static/chart/' + dash_card.src + '" name="' + dash_card.src + '" width="100%" height="600px" style="border:none;"></iframe>')
+        dash_out_elem.update({"content" : dash_out_elem_content})
+        dash_out.append(dash_out_elem)
+        
+            
+
+    return render_template("dashboard.html", dash=dash_out)
 
 
 if __name__ == '__main__':
