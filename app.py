@@ -581,7 +581,8 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
 def del_dashboard(dash_name):
     if request.method == 'POST':
         db.session.query(Dashboard).filter(Dashboard.user_id==request.cookies.get('user_id'), Dashboard.name==dash_name).delete()
-    return
+        db.session.commit()
+    return ""
 
 
 @app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:dash_name>', methods=['GET', 'POST'])
@@ -602,7 +603,7 @@ def show_dashboard():
     for dash in dashs:        
         dash_out_elem = {}
         dash_out_elem.update({"name" : dash.name})
-        dash_cards = db.session.query(Dashboard).filter(Dashboard.user_id==request.cookies.get('user_id'), Dashboard.name==dash.name).all()
+        dash_cards = db.session.query(Dashboard).filter(Dashboard.user_id==request.cookies.get('user_id'), Dashboard.name==dash.name).order_by(Dashboard.id).all()
         dash_out_elem_content = []
         for dash_card in dash_cards:
             if dash_card.src[-3:] == "inc":
