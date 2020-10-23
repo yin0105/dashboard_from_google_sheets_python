@@ -10,7 +10,60 @@
 $(document).ready(function() {
   "use strict"
   // init list view datatable
+  function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+  }
+
   $("#main-menu-navigation > li:contains('User')").addClass("active");
+
+  $("input[name='user_id']").each(function () {
+    console.log("user_id = " + $(this).prop("value"))
+  });
+
+  if (getCookie("admin") == '0') {
+    $("#approve_field").css("display", "none");
+  }
+ 
+  // $('td[name="photo"] > img').each(function() {
+  //   var img_src = $(this).prop("src")
+  //   if (img_src.substring(img_src.length - 6, img_src.length) == "photo/") {
+  //     $(this).parent("td").html("<input type='file' name='photo_file'>");
+  //   }
+  // });
+
+  $("input[name='photo_file']").change(function() {
+    if ($(this).val() != "") {
+      $(this).parent().parent().children("input[name='update_type']").val("photo");
+      $(this).parent().parent().parent().submit();
+    }
+  });
+
+  $("select[name='company']").change(function() {
+    console.log("company = " + $(this).val())
+  });
+
+  $('#company').multiselect({
+    // columns: 3,
+    placeholder: 'Select Companies',
+    search: true,
+    searchOptions: {
+        'default': 'Search Companies'
+    },
+    selectAll: true
+  });
+    
   var dataListView = $(".data-list-view").DataTable({
     responsive: false,
     columnDefs: [
@@ -147,13 +200,19 @@ $('.action-edit').on("click",function(e){
   $(".add-new-data").addClass("show");
   $(".overlay-bg").addClass("show");
   
-  $("#comp_name").val($(this).parent().siblings("[name='comp_name']").text())
-  $("#cnpj").val($(this).parent().siblings("[name='cnpj']").text())
+  $("#user_name").val($(this).parent().siblings("[name='user_name']").text())
+  $("#lastname").val($(this).parent().siblings("[name='lastname']").text())
   $("#email").val($(this).parent().siblings("[name='email']").text())
-  $("#standard_rate").val($(this).parent().siblings("[name='standard_rate']").text())
-  $("#improved_rate").val($(this).parent().siblings("[name='improved_rate']").text())
-  $("#logo").val($(this).parent().siblings("[name='logo']").text())
-  $("#cur_cnpj").val($(this).parent().siblings("[name='cnpj']").text())
+  $("#password").val($(this).parent().siblings("[name='password']").text())
+  if ($(this).parent().siblings("[name='approve']").text() == "True") {
+    $("#approve").prop("checked", true)
+  }else {
+    $("#approve").prop("checked", false)
+  }
+  
+  $("#company").val($(this).parent().siblings("[name='companies']").text())
+
+  $("#cur_user").val($(this).parent().siblings("[name='user_id']").prop("value"))
   $("#btn_add_data").html("Dados de atualização")
 });
 
@@ -161,5 +220,11 @@ $('.action-edit').on("click",function(e){
 $('.action-delete').on("click", function(e){
   e.stopPropagation();
   location.href = "/remove_user/" + $(this).parent().siblings("[name='user_id']").val()
+ 
+});
+
+$('td[name="photo"] > img').on("click", function(e){
+  e.stopPropagation();
+  console.log("img clicked")
  
 });

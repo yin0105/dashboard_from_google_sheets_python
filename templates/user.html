@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 
 {% block styles %}
-
+<link rel="stylesheet" type="text/css" href="/static/app-assets/css/jquery.multiselect.css">
 {% endblock %}
 
 {% block content %}
@@ -29,20 +29,22 @@
                     </tr>
                 </thead>
                 <tbody>
+                    
                     {% for user in users %} 
                         <tr>
                             <td></td>
                             <input type="hidden" name="user_id" value="{{user.id}}">
+                            <input type="hidden" name="update_type">
                             <td class="product-name" name="user_name">{{user.name}}</td>
                             <td class="product-name" name="lastname">{{user.lastname}}</td>
                             <td class="product-category" name="email">{{user.email}}</td>                            
                             <td class="product-category" name="password">{{user.password}}</td>
                             <td class="product-img" name="photo"><img src="/static/app-assets/images/user_photo/{{user.photo}}" alt="Img placeholder"></td>
                             <td class="product-category" name="companies">{{user.companies}}</td>
-                            <td class="product-category" name="approve"><input type="checkbox" checked></td>
+                            <td class="product-category" name="approve">{{user.approve}}</td>
                             <td class="product-action">
-                                <!-- <span class="action-edit"><i class="feather icon-edit"></i></span> -->
-                                <span class="action-delete"><i class="feather icon-trash"></i></span>
+                                <span class="action-edit"><i class="feather icon-edit"></i></span>
+                                <!-- <span class="action-delete"><i class="feather icon-trash"></i></span> -->
                             </td>
                         </tr>
                     {% endfor %}
@@ -64,37 +66,46 @@
                     </div>
                 </div>
                 <form action="" method="post" class="form" role="form" enctype="multipart/form-data">
-                    <input type="hidden" name="cur_cnpj" id="cur_cnpj">
+                    <input type="hidden" name="cur_user" id="cur_user">
                     <div class="data-items pb-3">
                         <div class="data-fields px-2 mt-3">
                             <div class="row">                            
                                 <div class="col-sm-12 data-field-col">
-                                    <label for="comp_name">Company Name</label>
-                                    <input type="text" class="form-control" name="comp_name" id="comp_name">
+                                    <label for="user_name">Nome</label>
+                                    <input type="text" class="form-control" name="user_name" id="user_name">
                                 </div>
                                 <div class="col-sm-12 data-field-col">
-                                    <label for="cnpj">CNPJ</label>
-                                    <input type="text" class="form-control" name="cnpj" id="cnpj">
+                                    <label for="lastname">Sobrenome</label>
+                                    <input type="text" class="form-control" name="lastname" id="lastname">
                                 </div>
                                 <div class="col-sm-12 data-field-col">
                                     <label for="email">email</label>
                                     <input type="text" class="form-control" name="email" id="email">
                                 </div>
                                 <div class="col-sm-12 data-field-col">
-                                    <label for="standard_rate">Standard Sales Tax Rate</label>
-                                    <input type="text" class="form-control" name="standard_rate" id="standard_rate">
+                                    <label for="password">Senha</label>
+                                    <input type="text" class="form-control" name="password" id="password">
+                                </div>
+                                <div class="col-sm-12 data-field-col" id="approve_field">
+                                    <!-- <label for="approve">aprovar</label> -->
+                                    <input type="checkbox" name="approve" id="approve">  aprovar
                                 </div>
                                 <div class="col-sm-12 data-field-col">
-                                    <label for="improved_rate">Improved Sales Tax Rate</label>
-                                    <input type="text" class="form-control" name="improved_rate" id="improved_rate">
+                                    <label for="company">Empresas</label>
+                                    <select class="form-control" name="company" id="company" multiple>
+                                        {% for company in companies %}
+                                            <option value="{{company.comp_name}}">{{company.comp_name}}</option>
+                                        {% endfor %}
+                                    </select>
+
                                 </div>
                                 <div class="col-sm-12 data-field-col data-list-upload">
-                                    <label for="logo">Company Logo</label>
-                                    <input type="file" class="form-control" name="logo" id="logo"> 
+                                    <label for="photo">Foto</label>
+                                    <input type="file" class="form-control" name="photo" id="photo"> 
                                     <!-- <form action="#" class="dropzone dropzone-area" id="dataListUpload">
                                         <div class="dz-message">Upload Image</div>
                                     </form> -->
-                                    <!-- <div action="#" class="dropzone dropzone-area" name="logo">
+                                    <!-- <div action="#" class="dropzone dropzone-area" name="photo">
                                         <div class="dz-message">Upload Image</div>
                                     </div> -->
                                 </div>
@@ -125,6 +136,7 @@
 
 <!-- BEGIN: Page JS-->
 <script src="/static/app-assets/js/user-list-view.js"></script>
+<script src="/static/app-assets/js/jquery.multiselect.js"></script>
 <!-- END: Page JS-->
 {% endblock %}
 

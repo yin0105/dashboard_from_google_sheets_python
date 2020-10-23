@@ -221,28 +221,31 @@ def login():
             user = User.query.filter_by(email=request.form['email']).first()
             if user :
                 if user.password == request.form['password'] :
-                    user.authenticated = True
-                    db.session.add(user)
-                    db.session.commit()
-                    current_user = user
-                    print("admin = " + str(user.admin))
-                    print("approve = " + str(user.approve))
-                    resp = make_response(redirect(url_for('admin')))
-                    resp.set_cookie('user_id', str(user.id))
-                    resp.set_cookie('email', request.form['email'])
-                    resp.set_cookie('password', request.form['password'])
-                    resp.set_cookie('remember', request.form['remember'])
-                    resp.set_cookie('photo', user.photo)
-                    resp.set_cookie('user_name', user.name)
-                    resp.set_cookie('user_lastname', user.lastname)
-                    # resp.set_cookie('approve', user.approve)
-                    if user.admin:
-                        resp.set_cookie('admin', '1')
+                    if user.approve == 0:
+                        return render_template('auth-login.html', msg='Not a approved user.')
                     else:
-                        resp.set_cookie('admin', '0')
-                    resp.set_cookie('connected', 'true')
-                    login_user(user, remember=True)
-                    return resp
+                        user.authenticated = True
+                        db.session.add(user)
+                        db.session.commit()
+                        current_user = user
+                        print("admin = " + str(user.admin))
+                        print("approve = " + str(user.approve))
+                        resp = make_response(redirect(url_for('admin')))
+                        resp.set_cookie('user_id', str(user.id))
+                        resp.set_cookie('email', request.form['email'])
+                        resp.set_cookie('password', request.form['password'])
+                        resp.set_cookie('remember', request.form['remember'])
+                        resp.set_cookie('photo', user.photo)
+                        resp.set_cookie('user_name', user.name)
+                        resp.set_cookie('user_lastname', user.lastname)
+                        # resp.set_cookie('approve', user.approve)
+                        if user.admin:
+                            resp.set_cookie('admin', '1')
+                        else:
+                            resp.set_cookie('admin', '0')
+                        resp.set_cookie('connected', 'true')
+                        login_user(user, remember=True)
+                        return resp
                 else:
                     return render_template('auth-login.html', msg='Password is incorrect.')
                 
@@ -287,8 +290,25 @@ def register():
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
-    users = User.query.order_by(User.id)
-    return render_template('user.html', users=users)
+    if request.method == 'POST':
+        f = request.files['photo']
+        if f.filename != '':
+            f.save(dir_path + "\\static\\app-assets\\images\\user_photo\\" + secure_filename(f.filename))
+        print("cur_user = " + str(request.form['cur_user']))
+        approve = 0
+        if 'approve' in request.form and request.form['approve'] == "on": approve = 1
+        company = ""
+        if 'company' in request.form : company = ", ".join(request.form.getlist('company'))
+        print("company = " + company)
+        db.session.query(User).filter_by(id = request.form['cur_user']).update({User.name:request.form['user_name'], User.lastname:request.form['lastname'], User.email:request.form['email'], User.photo:f.filename, User.password:request.form['password'], User.approve:approve, User.companies:company}, synchronize_session = False)
+        db.session.commit()
+
+    if request.cookies.get('admin') == "1" :
+        users = User.query.order_by(User.id)
+    else:
+        users = db.session.query(User).filter_by(id = request.cookies.get('user_id'))
+    companies = Company.query.order_by(Company.comp_name)
+    return render_template('user.html', users=users, companies=companies)
 
 
 @app.route('/remove_user/<string:user_id>', methods=['GET', 'POST'])
