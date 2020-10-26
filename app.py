@@ -447,8 +447,8 @@ def edit_dashboard():
     return render_template('edit_dashboard.html', tbls=tbls)
 
 
-@app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<string:chart_type>', methods=['GET', 'POST'])
-def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_type):
+@app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<string:chart_type>/<string:tbl_id>', methods=['GET', 'POST'])
+def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_type, tbl_id):
     creds = None
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
@@ -495,13 +495,33 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
     resp = ""
     # resp = '<iframe src="/static/chart/' + chart_id + '.html" width="100%" height="600px"></iframe>'
     if values:
+        # From To (Change Field Name)
+        fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.from_, Field.to, Field_Type.field_type).filter(Field.tbl_id==tbl_id).all()
+        new_values = []
+        new_columns = []
+        for column in values[0]:
+            for field in fields:
+                if field.from_ == column:
+                    new_columns.append(field.to)
+                    break
+            else:
+                new_columns.append(column)
+
+        new_values.append(new_columns)
+        for row in values[1:]:
+            new_values.append(row)
+
+
+
+
+
         chart_id = str(int(datetime.now().timestamp()))
         if chart_type == "table":
             
             with open('static/chart/' + chart_id + '.inc', 'w', encoding="utf-8", newline='') as inc_file:
                 inc_file.write("<table border='1' style='margin-left:auto; margin-right:auto' name='" + chart_id + ".inc'>")
                 resp = "<table border='1' style='margin-left:auto; margin-right:auto' name='" + chart_id + ".inc'>"
-                for row in values:
+                for row in new_values:
                     inc_file.write("<tr>")
                     resp += "<tr>"
                     for cell in row:
@@ -518,78 +538,78 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
             x_data = []
             fig = Null
             if chart_type == "columns":
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
-                    chart_data.append(go.Bar(name='', x=x_data[1:], y= [row[col] for row in values[1:]]))
+                for col in range(1, len(new_values[0])):
+                    chart_data.append(go.Bar(name='', x=x_data[1:], y= [row[col] for row in new_values[1:]]))
                 fig = go.Figure(data=chart_data)
             
             elif chart_type == "bars":
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
-                    chart_data.append(go.Bar(name='', y=x_data[1:], x= [row[col] for row in values[1:]], orientation='h'))
+                for col in range(1, len(new_values[0])):
+                    chart_data.append(go.Bar(name='', y=x_data[1:], x= [row[col] for row in new_values[1:]], orientation='h'))
                 fig = go.Figure(data=chart_data)
             
             elif chart_type == "lines":
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
-                    chart_data.append(go.Scatter(name='', x=x_data[1:], y= [row[col] for row in values[1:]]))
+                for col in range(1, len(new_values[0])):
+                    chart_data.append(go.Scatter(name='', x=x_data[1:], y= [row[col] for row in new_values[1:]]))
                 fig = go.Figure(data=chart_data)
             
             elif chart_type == "pizza_1":
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
-                    chart_data.append(go.Pie(name='', labels=x_data[1:], values= [row[col] for row in values[1:]]))
+                for col in range(1, len(new_values[0])):
+                    chart_data.append(go.Pie(name='', labels=x_data[1:], values= [row[col] for row in new_values[1:]]))
                 fig = go.Figure(data=chart_data)
             
             elif chart_type == "pizza_2":
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
-                    chart_data.append(go.Pie(name='', labels=x_data[1:], values= [row[col] for row in values[1:]], hole = 0.3))
+                for col in range(1, len(new_values[0])):
+                    chart_data.append(go.Pie(name='', labels=x_data[1:], values= [row[col] for row in new_values[1:]], hole = 0.3))
                 fig = go.Figure(data=chart_data)
             
             elif chart_type == "histogram":
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
-                    chart_data.append(go.Histogram(name='', x= [row[col] for row in values[1:]]))
+                for col in range(1, len(new_values[0])):
+                    chart_data.append(go.Histogram(name='', x= [row[col] for row in new_values[1:]]))
                 fig = go.Figure(data=chart_data)
 
             elif chart_type == "funnel":
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                fig = go.Figure(go.Funnel(y = x_data[1:], x= [row[1] for row in values[1:]]))
+                fig = go.Figure(go.Funnel(y = x_data[1:], x= [row[1] for row in new_values[1:]]))
 
             elif chart_type == "area":
                 fig = go.Figure()
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
+                for col in range(1, len(new_values[0])):
                     if col == 1:
-                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in values[1:]], fill='tozeroy'))
+                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in new_values[1:]], fill='tozeroy'))
                     else:
-                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in values[1:]], fill='tonexty'))
+                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in new_values[1:]], fill='tonexty'))
 
             elif chart_type == "radar":
                 fig = go.Figure()
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
-                    fig.add_trace(go.Scatterpolar(r=[row[col] for row in values[1:]], theta=x_data[1:], fill='toself', name=''))
+                for col in range(1, len(new_values[0])):
+                    fig.add_trace(go.Scatterpolar(r=[row[col] for row in new_values[1:]], theta=x_data[1:], fill='toself', name=''))
 
             elif chart_type == "combinations":
                 fig = go.Figure()
-                for row in values:
+                for row in new_values:
                     x_data.append(row[0])
-                for col in range(1, len(values[0])):
+                for col in range(1, len(new_values[0])):
                     if col == 1:
-                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in values[1:]]))
+                        fig.add_trace(go.Scatter(x=x_data[1:], y=[row[col] for row in new_values[1:]]))
                     else :
-                        fig.add_trace(go.Bar(x=x_data[1:], y=[row[col] for row in values[1:]]))
+                        fig.add_trace(go.Bar(x=x_data[1:], y=[row[col] for row in new_values[1:]]))
                 
             
             fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
