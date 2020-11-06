@@ -459,7 +459,7 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-            creds = flow.run_local_server(port=20000)
+            creds = flow.run_local_server(port=21000)
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
@@ -663,6 +663,6 @@ def show_dashboard():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5100, debug=True)
     
 
