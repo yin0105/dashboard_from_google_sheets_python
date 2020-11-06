@@ -469,47 +469,90 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
     sheet = service.spreadsheets()
     result = sheet.values().get(spreadsheetId=sheet_id, range=sheet_name + "!" + sheet_range).execute()
     values = result.get('values', [])
-
-    # Bar Chart (1)
-    # fig = go.Figure(data=go.Bar(y=[4, 5, 2, 3, 1]))
-    # fig.write_html('static/chart/third_figure.html', auto_open=False)
-
-    # Bar Chart (multi)
-    # chart_data = []
-    # for row in values:
-    #     chart_data.append(go.Bar(name='', x=values[0], y=row))
-            
-    # fig = go.Figure(data=chart_data)
-    # chart_id = str(int(DateTime()))
-    # fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
-
-
-    # [
-    #     go.Bar(name='SF Zoo', x=animals, y=[20, 14, 23]),
-    #     go.Bar(name='LA Zoo', x=animals, y=[12, 18, 29])
-    # ])
-    # Change the bar mode
-    # fig.update_layout(barmode='group')
-    # fig.show()
-    
+        
     resp = ""
     # resp = '<iframe src="/static/chart/' + chart_id + '.html" width="100%" height="600px"></iframe>'
     if values:
         # From To (Change Field Name)
-        fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.from_, Field.to, Field_Type.field_type).filter(Field.tbl_id==tbl_id).all()
+        fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.from_, Field.to, Field.rule, Field_Type.field_type).filter(Field.tbl_id==tbl_id).all()
         new_values = []
-        new_columns = []
+        new_columns = [] # fields name list
+        index_columns = [] # indexes list
+        name_columns = {} # name mapping dictionary (field name -> virtual variable name that will be used in expression)
+        rule_columns = []
+        type_columns = []
+        # field_index = -1
+        # for field in fields:
+        #     field_index += 1
+        #     col_index = -1
+        #     for column in values[0]:
+        #         col_index += 1
+        #         if field.from_ == column:
+        #             new_columns.append(field.to)
+        #             type_columns.append(field.field_type)
+        #             index_columns.append(col_index)
+        #             name_columns[field.to] = "a_" + str(field_index)
+        #             rule_columns.append("")
+        #             break
+        #     else:
+        #         col_index = -1
+        #         from_ = field.from_
+        #         if from_.strip() == "":
+        #             new_columns.append(field.to)
+        #             index_columns.append(col_index)
+        #             name_columns[field.to] = "a_" + str(field_index)
+        #             type_columns.append("")
+        #             rule_columns.append(field.rule)
+        #         else:
+        #             field_index -= 1
+        col_index = -1
+        field_index = -1
         for column in values[0]:
-            for field in fields:
+            col_index += 1                        
+            for field in fields:                              
                 if field.from_ == column:
+                    field_index += 1  
                     new_columns.append(field.to)
+                    type_columns.append(field.field_type)
+                    index_columns.append(col_index)
+                    name_columns[field.to] = "a_" + str(field_index)
+                    rule_columns.append("")
                     break
-            else:
-                new_columns.append(column)
+        col_index = -1
+        for field in fields:
+            if not field.to in name_columns.keys():
+                from_ = field.from_
+                if from_.strip() == "":
+                    field_index += 1  
+                    new_columns.append(field.to)
+                    index_columns.append(col_index)
+                    name_columns[field.to] = "a_" + str(field_index)
+                    type_columns.append("")
+                    rule_columns.append(field.rule)
+
+        for i in range(len(new_columns)):
+            if index_columns[i] == -1:
+                rr = rule_columns[i]
+                for cc in new_columns:
+                    rr = rr.replace(cc, name_columns[cc])
+                rule_columns[i] = rr
 
         new_values.append(new_columns)
         for row in values[1:]:
-            new_values.append(row)
+            tmp_row = []
+            for i in range(len(new_columns)):
+                if type_columns[i] != "Text":
+                    print("type = " + type_columns[i])
+                    exec(str(name_columns[new_columns[i]]) + "=" + str(row[index_columns[i]]))
+            for i in range(len(new_columns)):
+                if index_columns[i] > -1:
+                    tmp_row.append(row[index_columns[i]])
+                    print(str(name_columns[new_columns[i]]))                    
+                else:
+                    print("eval :: " + str(rule_columns[i]))
+                    tmp_row.append(eval(rule_columns[i]))
+            new_values.append(tmp_row)
+            # new_values.append(row)
 
 
 
@@ -525,8 +568,8 @@ def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_typ
                     inc_file.write("<tr>")
                     resp += "<tr>"
                     for cell in row:
-                        inc_file.write("<td>" + cell + "</td>")
-                        resp += "<td>" + cell + "</td>"
+                        inc_file.write("<td>" + str(cell) + "</td>")
+                        resp += "<td>" + str(cell) + "</td>"
                     inc_file.write("</tr>")
                     resp += "</tr>"
                 inc_file.write("</table>")
@@ -663,6 +706,6 @@ def show_dashboard():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5100, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
     
 
