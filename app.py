@@ -447,8 +447,8 @@ def edit_dashboard():
     return render_template('edit_dashboard.html', tbls=tbls)
 
 
-@app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<string:chart_type>/<string:tbl_id>', methods=['GET', 'POST'])
-def get_sheet_data(sheet_id, sheet_name, sheet_row_count, sheet_range, chart_type, tbl_id):
+@app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<string:chart_type>/<string:tbl_id>', methods=['GET', 'POST'])
+def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id):
     creds = None
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
@@ -668,8 +668,8 @@ def del_dashboard(dash_name):
     return ""
 
 
-@app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<int:sheet_row_count>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:dash_name>', methods=['GET', 'POST'])
-def save_dashboard(sheet_id, sheet_name, sheet_row_count, sheet_range, tbl_id, src, dash_name):
+@app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:dash_name>', methods=['GET', 'POST'])
+def save_dashboard(sheet_id, sheet_name, sheet_range, tbl_id, src, dash_name):
     if request.method == 'POST':
         dash = Dashboard(request.cookies.get('user_id'), dash_name, tbl_id, sheet_id, sheet_name, sheet_range, src)
         db.session.add(dash)

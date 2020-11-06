@@ -25,7 +25,7 @@
             <div class="row" id="card-drag-area">
                 {% for i in range(4) %}
                 <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
+                    <div class="card" style="text-align: -webkit-right;">
                         <div class="row">
                             <div class="col-md-1">
                                 <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
@@ -37,26 +37,20 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-3">
                                 <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
                             </div>            
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
+                            </div>                             
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-3">
                                 <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
                             </div>            
                             <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_name">
                             </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
                             <div class="col-md-1">
                                 <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
                             </div>            
@@ -72,10 +66,9 @@
                         </div>
                         <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
                     </div>
-                    
                 </div>
                 {% endfor %}
-                <!-- <div class="col-xl-6 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-md-12 col-sm-12" style="text-align: -webkit-right;">
                     <div class="card">
                         <div class="row">
                             <div class="col-md-1">
@@ -88,165 +81,20 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>
-                                                     
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                </div>
-                <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
                             <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
                                 <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
                             </div>            
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
+                            </div>                             
                         </div>
                         <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>                      
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                </div>
-                <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
                             <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
                                 <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
                             </div>            
                             <div class="col-md-2">
                                 <input type="text" class="form-control" name="sheet_name">
                             </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>                     
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                </div> -->
-                <div class="col-xl-12 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
-                            <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
                             <div class="col-md-1">
                                 <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
                             </div>            
@@ -260,10 +108,10 @@
                         <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
                     </div>
                 </div>
-                <div class="col-xl-12 col-md-12 col-sm-12">
+                <div class="col-xl-12 col-md-12 col-sm-12" style="text-align: -webkit-right;">
                     <div class="card">
                         <div class="row">
-                            <div class="offset-md-7 col-md-1">
+                            <div class="offset-md-5 col-md-3">
                                 <label for="dashboard_name" style="vertical-align: -webkit-baseline-middle;">Dashboard Name: </label> 
                             </div>            
                             <div class="col-md-2">

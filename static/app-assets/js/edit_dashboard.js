@@ -15,7 +15,7 @@ $(document).ready(function() {
         var tbl_id = $(t).parent().parent().parent().find(" > div > div >select").val()
         var sheet_id = $(t).parent().parent().parent().find(" > div > div > input[name='sheet_id']").val()
         var sheet_name = $(t).parent().parent().parent().find(" > div > div > input[name='sheet_name']").val()
-        var sheet_row_count = $(t).parent().parent().parent().find(" > div > div > input[name='sheet_header']").val()
+        // var sheet_row_count = $(t).parent().parent().parent().find(" > div > div > input[name='sheet_header']").val()
         var sheet_range = $(t).parent().parent().parent().find(" > div > div > input[name='sheet_range']").val()
         var $tbl_area = $(t).parent().parent().parent().find(" > div[name='table_area']");
         var chart_type = "table";
@@ -42,7 +42,7 @@ $(document).ready(function() {
         }
         $(t).parent().parent().find(" > div > input[name='ch_chart_type']").prop("checked", "true")
         $.ajax({
-            url: "/get_sheet_data/" + sheet_id + "/" + sheet_name + "/" + sheet_row_count + "/" + sheet_range + "/" + chart_type + "/" + tbl_id,
+            url: "/get_sheet_data/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + chart_type + "/" + tbl_id,
             type: "POST",
             datatype: "text",        
             success: function (result) { 
@@ -75,14 +75,14 @@ $(document).ready(function() {
                 var tbl_id = $(this).parent().find(" > div > div >select").val()
                 var sheet_id = $(this).parent().find(" > div > div > input[name='sheet_id']").val()
                 var sheet_name = $(this).parent().find(" > div > div > input[name='sheet_name']").val()
-                var sheet_row_count = $(this).parent().find(" > div > div > input[name='sheet_header']").val()
+                // var sheet_row_count = $(this).parent().find(" > div > div > input[name='sheet_header']").val()
                 var sheet_range = $(this).parent().find(" > div > div > input[name='sheet_range']").val()
                 var $tbl_area = $(this).parent().find(" > div[name='table_area']");
                 var src = $(this).children("[name]").first().attr("name")
                 console.log("this = " + $(this).html());
                 console.log($(this).children("[name]").first().attr("name"));
                 $.ajax({
-                    url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_row_count + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + dash_name,
+                    url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + dash_name,
                     type: "POST",
                     datatype: "text",        
                     success: function (result) { 
