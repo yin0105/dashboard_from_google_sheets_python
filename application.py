@@ -23,6 +23,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Table, Column, Integer, ForeignKey
 import plotly.graph_objects as go
 from datetime import datetime
+import locale
 
 
 
@@ -45,6 +46,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 current_user = Null
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
@@ -544,7 +546,7 @@ def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id):
             for i in range(len(new_columns)):
                 if type_columns[i] != "Text":
                     print("type = " + type_columns[i])
-                    exec(str(name_columns[new_columns[i]]) + "=" + str(row[index_columns[i]]))
+                    exec(str(name_columns[new_columns[i]]) + "=" + locale.atof(str(row[index_columns[i]])))
             for i in range(len(new_columns)):
                 if index_columns[i] > -1:
                     tmp_row.append(row[index_columns[i]])
@@ -707,6 +709,6 @@ def show_dashboard():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5023, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
     
 
