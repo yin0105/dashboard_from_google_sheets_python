@@ -10,7 +10,7 @@ FROM python:3.7.9
 COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt 
-EXPOSE 5023 
+EXPOSE 5000 
 RUN chmod 777 /app/static/chart
 RUN chmod 777 /app/static/app-assets/images
 ENTRYPOINT [ "python" ] 
