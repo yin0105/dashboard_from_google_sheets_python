@@ -9,6 +9,8 @@
 FROM python:3.7.9 
 COPY . /app
 WORKDIR /app
+RUN export LC_ALL="pt_BR.UTF-8"
+RUN export LC_CTYPE="pt_BR.UTF-8"
 RUN pip install -r requirements.txt 
 EXPOSE 5000 
 RUN chmod 777 /app/static/chart

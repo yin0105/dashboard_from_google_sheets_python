@@ -46,7 +46,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 current_user = Null
-locale.setlocale(locale.LC_NUMERIC, 'pt_br')
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
