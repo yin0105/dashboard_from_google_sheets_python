@@ -33,8 +33,8 @@ class Config(object):
 app = Flask(__name__)
 app.config.from_object(Config)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/dashboard_google_sheet'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:aaaaaaaa@database-2.cgkozbghz2qj.sa-east-1.rds.amazonaws.com/dashboard_google_sheet'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/dashboard_google_sheet'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:aaaaaaaa@database-2.cgkozbghz2qj.sa-east-1.rds.amazonaws.com/dashboard_google_sheet'
 app.config['SECRET_KEY'] = "3489wfksf93r2k3lf9sdjkfe9t2j3krl"
 
 Bootstrap(app)
@@ -478,6 +478,7 @@ def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id):
     if values:
         # From To (Change Field Name)
         fields = Field.query.join(Field_Type, Field.field_type==Field_Type.id).add_columns(Field.from_, Field.to, Field.rule, Field_Type.field_type).filter(Field.tbl_id==tbl_id).all()
+        print("tbl_id = " + str(tbl_id))
         new_values = []
         new_columns = [] # fields name list
         index_columns = [] # indexes list
@@ -512,15 +513,18 @@ def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id):
         field_index = -1
         for column in values[0]:
             col_index += 1                        
-            for field in fields:                              
+            for field in fields: 
+                if col_index == 0: print("field : #" + field.to + "#")                             
                 if field.from_ == column:
                     field_index += 1  
                     new_columns.append(field.to)
                     type_columns.append(field.field_type)
                     index_columns.append(col_index)
+                    print(column + " :: " + str(col_index))
                     name_columns[field.to] = "a_" + str(field_index)
                     rule_columns.append("")
                     break
+        print("len = " + str(len(fields)))
         col_index = -1
         for field in fields:
             if not field.to in name_columns.keys():
@@ -555,6 +559,7 @@ def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id):
                     print("eval :: " + str(rule_columns[i]))
                     tmp_row.append(eval(rule_columns[i]))
             new_values.append(tmp_row)
+        print(new_values)
             # new_values.append(row)
 
 
