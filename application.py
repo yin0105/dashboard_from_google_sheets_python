@@ -663,6 +663,14 @@ def del_dashboard(dash_name):
     return ""
 
 
+@app.route('/del_chart/<string:chart_id>', methods=['GET', 'POST'])
+def del_chart(chart_id):
+    if request.method == 'POST':
+        db.session.query(Dashboard).filter(Dashboard.id==chart_id).delete()
+        db.session.commit()
+    return ""
+
+
 @app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:chart_title>/<string:dash_name>/<string:chart_type>', methods=['GET', 'POST'])
 def save_dashboard(sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name, chart_type):
     sheet_id =  sheet_id.strip()

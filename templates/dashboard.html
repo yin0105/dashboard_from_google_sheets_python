@@ -16,7 +16,7 @@
 
 <script>
     
-    function save_dash(sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name, chart_type, el_self) {
+    function save_dash(sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name, chart_type, id, el_self) {
         if (chart_title == '') {
             chart_title = 'untitled';  
         } 
@@ -33,9 +33,35 @@
                 console.log(result);
                 var res = "";
                 res = result;
-                res = res.substring(27, res.indexOf(".html")) + ".html";
+                src = res.substring(27, res.indexOf(".html")) + ".html";
                 // var $tbl_area = $(t).parent().parent().parent().find(" > div[name='table_area']");
                 $tbl_area.html(result);
+
+                $.ajax({
+                    url: "/del_chart/" + id,
+                    type: "POST",
+                    datatype: "text",        
+                    success: function (result) { 
+                        console.log(result)
+                    },
+                    error: function (error) {
+                        console.log(error)
+                    }       
+                });
+
+                $.ajax({
+                    url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name + "/" + chart_type,
+                    // url: "/get_sheet_data/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + chart_type + "/" + tbl_id + "/" + chart_title,
+                    type: "POST",
+                    datatype: "text",        
+                    success: function (result) { 
+                        alert("A chart is saved successfully.");
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        alert("Saving chart is failed.");
+                    }       
+                });
             },
             error: function (error) {
                 console.log(error)
@@ -73,7 +99,7 @@
                                                             <div class="card">                                                            
                                                                 <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;">{{cc.content}}</div>                        
                                                                 <div class="offset-md-8 col-md-4">
-                                                                    <button type="button" class="btn btn-primary form-control" name="chart_refresh" id="chart_refresh" onclick="save_dash('{{cc.spread_id}}', '{{cc.sheet_name}}', '{{cc.range}}', '{{cc.table_id}}', '{{cc.src}}', '{{cc.title}}', '{{cc.name}}', '{{cc.chart_type}}', this);">refresh</button>
+                                                                    <button type="button" class="btn btn-primary form-control" name="chart_refresh" id="chart_refresh" onclick="save_dash('{{cc.spread_id}}', '{{cc.sheet_name}}', '{{cc.range}}', '{{cc.table_id}}', '{{cc.src}}', '{{cc.title}}', '{{cc.name}}', '{{cc.chart_type}}', '{{cc.id}}', this);">refresh</button>
                                                                     <!-- '{{cc.spread_id}}', '{{cc.sheet_name}}', '{{cc.range}}', '{{cc.table_id}}', '{{cc.src}}', '{{cc.title}}', '{{cc.name}}' -->
                                                                     <!-- url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name, -->
                                                                 </div>
