@@ -14,6 +14,59 @@
     }
 </style>
 
+<script>
+    
+    function save_dash(sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name, chart_type, el_self) {
+        if (chart_title == '') {
+            chart_title = 'untitled';  
+        } 
+
+        alert(el_self);
+        console.log(el_self);
+        $(el_self)
+        var $tbl_area = $(el_self).parent().parent().find(" > div[name='table_area']");
+        alert($tbl_area.html());
+
+        // get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id, chart_title):
+        $.ajax({
+            // url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name,
+            url: "/get_sheet_data/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + chart_type + "/" + tbl_id + "/" + chart_title,
+            type: "POST",
+            datatype: "text",        
+            success: function (result) { 
+                console.log(result);
+                var res = "";
+                res = result;
+                res = res.substring(27, res.indexOf(".html")) + ".html";
+                // var $tbl_area = $(t).parent().parent().parent().find(" > div[name='table_area']");
+                alert(res);
+                $tbl_area.html(result);
+            },
+            error: function (error) {
+                console.log(error)
+            }       
+        });
+
+    }
+    // function save_dash() {
+    //     // sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name
+    //     // console.log("sheet_id = " + sheet_id);
+    //     alert("ok");
+    //     console.log("ok");
+    //     // $.ajax({
+    //     //     url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name,
+    //     //     type: "POST",
+    //     //     datatype: "text",        
+    //     //     success: function (result) { 
+    //     //         console.log(result)
+    //     //     },
+    //     //     error: function (error) {
+    //     //         console.log(error)
+    //     //     }       
+    //     // });
+    // }
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -35,304 +88,31 @@
                                 <div class="tab-content">
                                     {% for dd in dash %}
                                         <div class="tab-pane" id="content_{{dd.name}}" aria-labelledby="content_{{dd.name}}_tab" role="tabpanel">
-                                            <!-- {% for cc in dd.content %}
-                                                <div class="card col-xl-6 col-md-12 col-sm-12">                                                
-                                                    <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;">{{cc}}</div>                        
-                                                </div>
-                                            {% endfor %} -->
                                             <section id="draggable-cards">
                                                 <div class="row" id="card-drag-area">
                                                     {% for cc in dd.content %}
                                                         <div class="col-xl-6 col-md-12 col-sm-12">
                                                             <div class="card">                                                            
-                                                                <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;">{{cc}}</div>                        
+                                                                <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;">{{cc.content}}</div>                        
+                                                                <div class="offset-md-8 col-md-4">
+                                                                    <button type="button" class="btn btn-primary form-control" name="chart_refresh" id="chart_refresh" onclick="save_dash('{{cc.spread_id}}', '{{cc.sheet_name}}', '{{cc.range}}', '{{cc.table_id}}', '{{cc.src}}', '{{cc.title}}', '{{cc.name}}', '{{cc.chart_type}}', this);">refresh</button>
+                                                                    <!-- '{{cc.spread_id}}', '{{cc.sheet_name}}', '{{cc.range}}', '{{cc.table_id}}', '{{cc.src}}', '{{cc.title}}', '{{cc.name}}' -->
+                                                                    <!-- url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name, -->
+                                                                </div>
                                                             </div>                                                        
                                                         </div>
+
+                                                        
                                                     {% endfor %}
                                                 </div>
                                             </section>
+                                            
 
                                         </div>
                                     {% endfor%}
-                                    
-                                    <!-- <div class="tab-pane active" id="profile" aria-labelledby="profile-tab" role="tabpanel">
-                                        <p>Pudding candy canes sugar plum cookie chocolate cake powder croissant. Carrot cake tiramisu danish
-                                            candy cake muffin croissant tart dessert. Tiramisu caramels candy canes chocolate cake sweet roll
-                                            liquorice icing cupcake.</p>
-                                    </div>
-                                    <div class="tab-pane" id="dropdown31" role="tabpanel" aria-labelledby="dropdown31-tab" aria-expanded="false">
-                                        <p>Cake croissant lemon drops gummi bears carrot cake biscuit cupcake croissant. Macaroon lemon drops
-                                            muffin jelly sugar plum chocolate cupcake danish icing. Soufflé tootsie roll lemon drops sweet roll
-                                            cake icing cookie halvah cupcake.</p>
-                                    </div>
-                                    <div class="tab-pane" id="dropdown32" role="tabpanel" aria-labelledby="dropdown32-tab" aria-expanded="false">
-                                        <p>Chocolate croissant cupcake croissant jelly donut. Cheesecake toffee apple pie chocolate bar biscuit
-                                            tart croissant. Lemon drops danish cookie. Oat cake macaroon icing tart lollipop cookie sweet bear
-                                            claw.</p>
-                                    </div>
-                                    <div class="tab-pane" id="about" aria-labelledby="about-tab" role="tabpanel">
-                                        <p>Carrot cake dragée chocolate. Lemon drops ice cream wafer gummies dragée. Chocolate bar liquorice
-                                            cheesecake cookie chupa chups marshmallow oat cake biscuit. Dessert toffee fruitcake ice cream
-                                            powder
-                                            tootsie roll cake.</p>
-                                    </div> -->
                                 </div>
                             </div>
-                        </div>
-                    <!-- </div> -->
-                <!-- </div> -->
-                <!-- <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
-                            <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>
-                            <div class="col-md-2 mt-1 mb-2">
-                                <button type="button" class="btn btn-outline-primary btn-md btn_import_table">import</button>
-                            </div>                            
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                    
-                </div>
-                <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
-                            <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>                        
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                </div>
-                <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
-                            <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>                       
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                </div>
-                <div class="col-xl-6 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
-                            <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>                           
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                </div>
-                <div class="col-xl-12 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <label for="tbl_list" style="vertical-align: -webkit-baseline-middle;">Tables: </label> 
-                            </div>            
-                            <div class="col-md-3">
-                                <select class="form-control" id="tbl_list">
-                                    {% for tbl in tbls %} 
-                                        <option value="{{tbl.id}}">{{tbl.tbl_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_id" style="vertical-align: -webkit-baseline-middle;">Spread Sheet ID: </label> 
-                            </div>            
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="sheet_id">
-                            </div> 
-                            <div class="col-md-1">
-                                <label for="sheet_name" style="vertical-align: -webkit-baseline-middle;">Sheet Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_name">
-                            </div> 
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="sheet_header" style="vertical-align: -webkit-baseline-middle;">Header Row Index: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_header">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="sheet_range" style="vertical-align: -webkit-baseline-middle;">Range: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="sheet_range">
-                            </div>
-                            <div class="offset-md-1 col-md-1">
-                                <input type="radio" class="form-control" name="ch_chart_type">
-                            </div>                         
-                        </div>
-                        <div class="row col-md-12 mt-2" name="table_area" style="margin: auto; overflow-x:auto;"></div>                        
-                    </div>
-                </div>
-                <div class="col-xl-12 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="row">
-                            <div class="offset-md-7 col-md-1">
-                                <label for="dashboard_name" style="vertical-align: -webkit-baseline-middle;">Dashboard Name: </label> 
-                            </div>            
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" name="dashboard_name" id="dashboard_name">
-                            </div>           
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-outline-primary" id="btn_save_dashboard">Save Dashboard</button>
-                            </div> 
-                        </div>                      
-                    </div>
-                </div> -->
-            <!-- </div>
-        </section> -->
-        <!-- // Draggable cards section end -->       
+                        </div>    
 
     </div>
 
@@ -340,6 +120,7 @@
 {% endblock %}
 
 {% block js %}
+
 <!-- BEGIN: Page Vendor JS-->
 <script src="/static/app-assets/vendors/js/extensions/dragula.min.js"></script>
 <!-- END: Page Vendor JS-->

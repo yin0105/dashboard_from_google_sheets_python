@@ -24,6 +24,7 @@ from sqlalchemy import Table, Column, Integer, ForeignKey
 import plotly.graph_objects as go
 from datetime import datetime
 import locale
+from pprint import pprint
 
 
 
@@ -170,7 +171,7 @@ class Field_Type(db.Model, SerializerMixin):
 class Dashboard(db.Model, SerializerMixin):  
     __tablename__ = 'dashboard'
 
-    serialize_only = ('user_id', 'name', 'table_id', 'spread_id', 'sheet_name', 'range', 'title', 'src')
+    serialize_only = ('user_id', 'name', 'table_id', 'spread_id', 'sheet_name', 'range', 'title', 'src', 'chart_type')
     
     user_id =  db.Column(db.Integer, nullable = False) 
     name =  db.Column(db.String(30), nullable = False) 
@@ -180,9 +181,10 @@ class Dashboard(db.Model, SerializerMixin):
     range =  db.Column(db.String(10), nullable = False) 
     title =  db.Column(db.String(30), nullable = False) 
     src =  db.Column(db.String(50), nullable = False) 
+    chart_type =  db.Column(db.String(30), nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    def __init__(self, user_id, name, table_id, spread_id, sheet_name, range, chart_title, src):
+    def __init__(self, user_id, name, table_id, spread_id, sheet_name, range, chart_title, src, chart_type):
         self.user_id = user_id
         self.name = name
         self.table_id = table_id
@@ -191,6 +193,7 @@ class Dashboard(db.Model, SerializerMixin):
         self.range = range
         self.title = chart_title
         self.src = src
+        self.chart_type = chart_type
 
 
 
@@ -455,6 +458,9 @@ def edit_dashboard():
 @app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<string:chart_type>/<string:tbl_id>/<string:chart_title>', methods=['GET', 'POST'])
 def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id, chart_title):
     creds = None
+    sheet_id =  sheet_id.strip()
+    sheet_name =  sheet_name.strip()
+    sheet_range =  sheet_range.strip()
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -487,30 +493,6 @@ def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id, chart_
         name_columns = {} # name mapping dictionary (field name -> virtual variable name that will be used in expression)
         rule_columns = []
         type_columns = []
-        # field_index = -1
-        # for field in fields:
-        #     field_index += 1
-        #     col_index = -1
-        #     for column in values[0]:
-        #         col_index += 1
-        #         if field.from_ == column:
-        #             new_columns.append(field.to)
-        #             type_columns.append(field.field_type)
-        #             index_columns.append(col_index)
-        #             name_columns[field.to] = "a_" + str(field_index)
-        #             rule_columns.append("")
-        #             break
-        #     else:
-        #         col_index = -1
-        #         from_ = field.from_
-        #         if from_.strip() == "":
-        #             new_columns.append(field.to)
-        #             index_columns.append(col_index)
-        #             name_columns[field.to] = "a_" + str(field_index)
-        #             type_columns.append("")
-        #             rule_columns.append(field.rule)
-        #         else:
-        #             field_index -= 1
         col_index = -1
         field_index = -1
         for column in values[0]:
@@ -681,10 +663,13 @@ def del_dashboard(dash_name):
     return ""
 
 
-@app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:chart_title>/<string:dash_name>', methods=['GET', 'POST'])
-def save_dashboard(sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name):
+@app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:chart_title>/<string:dash_name>/<string:chart_type>', methods=['GET', 'POST'])
+def save_dashboard(sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name, chart_type):
+    sheet_id =  sheet_id.strip()
+    sheet_name =  sheet_name.strip()
+    sheet_range =  sheet_range.strip()
     if request.method == 'POST':
-        dash = Dashboard(request.cookies.get('user_id'), dash_name, tbl_id, sheet_id, sheet_name, sheet_range, chart_title, src)
+        dash = Dashboard(request.cookies.get('user_id'), dash_name, tbl_id, sheet_id, sheet_name, sheet_range, chart_title, src, chart_type)
         db.session.add(dash)
         db.session.commit()
         # return redirect(url_for("login"))
@@ -702,19 +687,35 @@ def show_dashboard():
         dash_cards = db.session.query(Dashboard).filter(Dashboard.user_id==request.cookies.get('user_id'), Dashboard.name==dash.name).order_by(Dashboard.id).all()
         dash_out_elem_content = []
         for dash_card in dash_cards:
+            new_dict = {}
+            new_dict.update({"user_id" : dash_card.user_id})
+            new_dict.update({"name" : dash_card.name})
+            new_dict.update({"table_id" : dash_card.table_id})
+            new_dict.update({"spread_id" : dash_card.spread_id})
+            new_dict.update({"sheet_name" : dash_card.sheet_name})
+            new_dict.update({"range" : dash_card.range})
+            new_dict.update({"title" : dash_card.title})
+            new_dict.update({"src" : dash_card.src})
+            new_dict.update({"id" : dash_card.id})
+            new_dict.update({"chart_type" : dash_card.chart_type})
+            inc_file_content = ""
             if dash_card.src[-3:] == "inc":
                 with open('static/chart/' + dash_card.src, 'r', encoding="utf-8") as inc_file:
-                    inc_file_content = ""
                     for f in inc_file.readlines():
-                        inc_file_content += f
-                    dash_out_elem_content.append(inc_file_content)
+                        inc_file_content += f                    
             else:
-                dash_out_elem_content.append('<iframe src="/static/chart/' + dash_card.src + '" name="' + dash_card.src + '" width="100%" height="600px" style="border:none;"></iframe>')
+                inc_file_content = '<iframe src="/static/chart/' + dash_card.src + '" name="' + dash_card.src + '" width="100%" height="600px" style="border:none;"></iframe>'
+            
+            new_dict.update({"content" : inc_file_content})
+
+
+            dash_out_elem_content.append(new_dict)
         dash_out_elem.update({"content" : dash_out_elem_content})
         dash_out.append(dash_out_elem)
+
         
             
-
+    pprint(dash_out)
     return render_template("dashboard.html", dash=dash_out)
 
 

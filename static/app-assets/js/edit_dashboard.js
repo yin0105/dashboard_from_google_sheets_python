@@ -60,17 +60,17 @@ $(document).ready(function() {
     
     $("#btn_save_dashboard").on("click", function(e){
         var dash_name = $("#dashboard_name").val()
-        $.ajax({
-            url: "/del_dash/" + dash_name,
-            type: "POST",
-            datatype: "text",        
-            success: function (result) { 
-                console.log(result)
-            },
-            error: function (error) {
-                console.log(error)
-            }       
-        });
+        // $.ajax({
+        //     url: "/del_dash/" + dash_name,
+        //     type: "POST",
+        //     datatype: "text",        
+        //     success: function (result) { 
+        //         console.log(result)
+        //     },
+        //     error: function (error) {
+        //         console.log(error)
+        //     }       
+        // });
 
         $("div[name='table_area']").each(function() {
             if ($(this).html() != "") {
