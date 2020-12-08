@@ -42,7 +42,8 @@ $(document).ready(function() {
         }else if ($(th).children("input").attr("id") == "btn_chart_histogram") {
             chart_type = "histogram";
         }
-        $(t).parent().parent().find(" > div > input[name='ch_chart_type']").prop("checked", "true")
+        $(t).parent().parent().parent().find(" > div > input[name='chart_type']").val(chart_type);
+        $(t).parent().parent().find(" > div > input[name='ch_chart_type']").prop("checked", "true");
         $.ajax({
             url: "/get_sheet_data/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + chart_type + "/" + tbl_id + "/" + chart_title,
             type: "POST",
@@ -81,11 +82,12 @@ $(document).ready(function() {
                 var sheet_range = $(this).parent().find(" > div > div > input[name='sheet_range']").val()
                 var chart_title = $(this).parent().find(" > div > div > input[name='chart_title']").val()
                 var $tbl_area = $(this).parent().find(" > div[name='table_area']");
+                var chart_type = $(this).parent().find(" > div > input[name='chart_type']").val()
                 var src = $(this).children("[name]").first().attr("name")
                 console.log("this = " + $(this).html());
                 console.log($(this).children("[name]").first().attr("name"));
                 $.ajax({
-                    url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name,
+                    url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name + "/" + chart_type,
                     type: "POST",
                     datatype: "text",        
                     success: function (result) { 

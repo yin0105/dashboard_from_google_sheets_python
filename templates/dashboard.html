@@ -21,11 +21,7 @@
             chart_title = 'untitled';  
         } 
 
-        alert(el_self);
-        console.log(el_self);
-        $(el_self)
         var $tbl_area = $(el_self).parent().parent().find(" > div[name='table_area']");
-        alert($tbl_area.html());
 
         // get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id, chart_title):
         $.ajax({
@@ -39,7 +35,6 @@
                 res = result;
                 res = res.substring(27, res.indexOf(".html")) + ".html";
                 // var $tbl_area = $(t).parent().parent().parent().find(" > div[name='table_area']");
-                alert(res);
                 $tbl_area.html(result);
             },
             error: function (error) {
@@ -48,23 +43,6 @@
         });
 
     }
-    // function save_dash() {
-    //     // sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name
-    //     // console.log("sheet_id = " + sheet_id);
-    //     alert("ok");
-    //     console.log("ok");
-    //     // $.ajax({
-    //     //     url: "/save_dash/" + sheet_id + "/" + sheet_name + "/" + sheet_range + "/" + tbl_id + "/" + src + "/" + chart_title + "/" + dash_name,
-    //     //     type: "POST",
-    //     //     datatype: "text",        
-    //     //     success: function (result) { 
-    //     //         console.log(result)
-    //     //     },
-    //     //     error: function (error) {
-    //     //         console.log(error)
-    //     //     }       
-    //     // });
-    // }
 </script>
 
 {% endblock %}
