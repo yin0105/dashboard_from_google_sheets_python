@@ -34,8 +34,8 @@ class Config(object):
 app = Flask(__name__)
 app.config.from_object(Config)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/dashboard_google_sheet'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:aaaaaaaa@database-2.cgkozbghz2qj.sa-east-1.rds.amazonaws.com/dashboard_google_sheet'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/dashboard_google_sheet'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:aaaaaaaa@database-2.cgkozbghz2qj.sa-east-1.rds.amazonaws.com/dashboard_google_sheet'
 app.config['SECRET_KEY'] = "3489wfksf93r2k3lf9sdjkfe9t2j3krl"
 
 Bootstrap(app)
