@@ -170,7 +170,7 @@ class Field_Type(db.Model, SerializerMixin):
 class Dashboard(db.Model, SerializerMixin):  
     __tablename__ = 'dashboard'
 
-    serialize_only = ('user_id', 'name', 'table_id', 'spread_id', 'sheet_name', 'range', 'src')
+    serialize_only = ('user_id', 'name', 'table_id', 'spread_id', 'sheet_name', 'range', 'title', 'src')
     
     user_id =  db.Column(db.Integer, nullable = False) 
     name =  db.Column(db.String(30), nullable = False) 
@@ -178,16 +178,18 @@ class Dashboard(db.Model, SerializerMixin):
     spread_id = db.Column(db.String(50), nullable = False) 
     sheet_name =  db.Column(db.String(30), nullable = False) 
     range =  db.Column(db.String(10), nullable = False) 
+    title =  db.Column(db.String(30), nullable = False) 
     src =  db.Column(db.String(50), nullable = False) 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    def __init__(self, user_id, name, table_id, spread_id, sheet_name, range, src):
+    def __init__(self, user_id, name, table_id, spread_id, sheet_name, range, chart_title, src):
         self.user_id = user_id
         self.name = name
         self.table_id = table_id
         self.spread_id = spread_id                
         self.sheet_name = sheet_name
         self.range = range
+        self.title = chart_title
         self.src = src
 
 
@@ -450,8 +452,8 @@ def edit_dashboard():
     return render_template('edit_dashboard.html', tbls=tbls)
 
 
-@app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<string:chart_type>/<string:tbl_id>', methods=['GET', 'POST'])
-def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id):
+@app.route('/get_sheet_data/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<string:chart_type>/<string:tbl_id>/<string:chart_title>', methods=['GET', 'POST'])
+def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id, chart_title):
     creds = None
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
@@ -662,7 +664,10 @@ def get_sheet_data(sheet_id, sheet_name, sheet_range, chart_type, tbl_id):
                     else :
                         fig.add_trace(go.Bar(x=x_data[1:], y=[row[col] for row in new_values[1:]]))
                 
-            
+            fig.update_layout(
+                title_text=chart_title,
+                title_x = 0.5
+            ) 
             fig.write_html('static/chart/' + chart_id + '.html', auto_open=False)
             resp = '<iframe src="/static/chart/' + chart_id + '.html" name="' + chart_id + '.html" width="100%" height="600px" style="border:none;"></iframe>'
     return resp
@@ -676,10 +681,10 @@ def del_dashboard(dash_name):
     return ""
 
 
-@app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:dash_name>', methods=['GET', 'POST'])
-def save_dashboard(sheet_id, sheet_name, sheet_range, tbl_id, src, dash_name):
+@app.route('/save_dash/<string:sheet_id>/<string:sheet_name>/<string:sheet_range>/<int:tbl_id>/<string:src>/<string:chart_title>/<string:dash_name>', methods=['GET', 'POST'])
+def save_dashboard(sheet_id, sheet_name, sheet_range, tbl_id, src, chart_title, dash_name):
     if request.method == 'POST':
-        dash = Dashboard(request.cookies.get('user_id'), dash_name, tbl_id, sheet_id, sheet_name, sheet_range, src)
+        dash = Dashboard(request.cookies.get('user_id'), dash_name, tbl_id, sheet_id, sheet_name, sheet_range, chart_title, src)
         db.session.add(dash)
         db.session.commit()
         # return redirect(url_for("login"))
